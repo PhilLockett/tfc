@@ -1,0 +1,34 @@
+tfc
+=====
+
+tfc is a command-line utility Text File Checker.
+
+The utility checks text files for consistent beginning of line whitespace 
+and line endings.
+
+Installing from tarball
+-----------------------
+
+The install process described in the INSTALL document is a generic 
+description of the install process. The install process is also described 
+in the README.md document. For completeness the install process is also 
+described below. All three descriptions are essentially the same and clearly, 
+it only needs to be installed once.
+
+The install you will need a C++ compiler and make installed to compile 
+'tfc'' from a release tarball. You will also need the ImageMagick image 
+processing suite installed. The following command will unpack the tarball.
+
+$ tar zxf tfc-1.0.tar.gz
+
+After unpacking, cd to the toplevel directory, tfc-1.0, and issue the 
+following shell commands:
+
+    $ ./configure
+    $ make
+    $ sudo make install
+
+Further reading
+---------------
+
+See 'README.md' for more details.
