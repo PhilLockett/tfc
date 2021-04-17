@@ -127,15 +127,6 @@ static int parseCommandLine(int argc, char *argv[])
 
 
 
-#if 0
-#define DEBUG
-static void dumpValues(void)
-{
-	std::cout << "outputDirectory\t" << outputDirectory << '\n';
-}
-#endif
-
-
 /**
  * Initialise 'tfc' using command line input and ensure we only do it once.
  *
@@ -149,10 +140,6 @@ int init(int argc, char *argv[])
     int ret = 0;
 
     std::call_once(virgin, [&](){ ret = parseCommandLine(argc, argv); });
-
-#if defined DEBUG
-    dumpValues();
-#endif
 
     return ret;
 }

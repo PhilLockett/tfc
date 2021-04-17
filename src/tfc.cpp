@@ -27,6 +27,42 @@
 
 
 /**
+ * @section tfc configuration data.
+ *
+ * Implementation of the tfc comand line configuration Singleton.
+ */
+
+void Config::display(std::ostream &os) const
+{
+    os << "Config is " << std::string{Config::isValid() ? "" : "NOT "} << "valid\n";
+    os << "Input file name:  " << Config::getInputFile() << '\n';
+    os << "Output file name: " << Config::getOutputFile() << '\n';
+    if (Config::isLeadingSet())
+    {
+        if (Config::isSpace())
+            os << "Leading spaces will be replaced with tabs\n";
+        else
+            os << "Leading tabs will be replaced with spaces\n";
+    }
+    else
+    {
+        os << "Leading whitespace will be unchanged\n";
+    }
+    if (Config::isTrailingSet())
+    {
+        if (Config::isDos())
+            os << "Newlines will be DOS style\n";
+        else
+            os << "Newlines will be Unix style\n";
+    }
+    else
+    {
+        os << "Newlines will be unchanged\n";
+    }
+}
+
+
+/**
  * @section System entry point.
  *
  */
@@ -41,12 +77,15 @@
 int main(int argc, char *argv[])
 {
 //- Get the command line parameters.
-    int ret = init(argc, argv);
-
-    if (ret < 0)
+    if (init(argc, argv) < 0)
     {
         return 1;
     }
+
+#if 0
+    std::cout << Config::getInstance() << '\n';
+#endif
+
 
 //- If all is well, generate the file.
     if (Config::isValid())

@@ -49,7 +49,7 @@ private:
         {  }
     virtual ~Config(void) {}
 
-    void display(std::ostream &os) const { std::cout << Config::getInstance().inputFile << '\n'; };
+    void display(std::ostream &os) const;
 
     enum class Whitespace { unspecified, space, tab };
     enum class EndOfLine { unspecified, dos, unix };
