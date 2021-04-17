@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     }
 
 #if 0
-    std::cout << Config::getInstance() << '\n';
+    std::cout << Config::get() << '\n';
 #endif
 
 

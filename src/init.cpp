@@ -139,7 +139,7 @@ int init(int argc, char *argv[])
     static std::once_flag virgin;
     int ret = 0;
 
-    std::call_once(virgin, [&](){ ret = parseCommandLine(argc, argv, Config::getInstance()); });
+    std::call_once(virgin, [&](){ ret = parseCommandLine(argc, argv, Config::get()); });
 
     return ret;
 }

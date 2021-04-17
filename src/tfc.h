@@ -59,12 +59,12 @@ private:
     Whitespace leading;
     EndOfLine trailing;
 
-    void setInputFile(std::string name) { Config::getInstance().inputFile = name; }
-    void setOutputFile(std::string name) { Config::getInstance().outputFile = name; }
-    void setSpaces() { Config::getInstance().leading = Whitespace::space; }
-    void setTabs() { Config::getInstance().leading = Whitespace::tab; }
-    void setDos() { Config::getInstance().trailing = EndOfLine::dos; }
-    void setUnix() { Config::getInstance().trailing = EndOfLine::unix; }
+    void setInputFile(std::string name) { Config::get().inputFile = name; }
+    void setOutputFile(std::string name) { Config::get().outputFile = name; }
+    void setSpaces() { Config::get().leading = Whitespace::space; }
+    void setTabs() { Config::get().leading = Whitespace::tab; }
+    void setDos() { Config::get().trailing = EndOfLine::dos; }
+    void setUnix() { Config::get().trailing = EndOfLine::unix; }
 
 public:
 //- Delete the copy constructor and assignement operator.
@@ -74,20 +74,20 @@ public:
     friend int parseCommandLine(int argc, char *argv[], Config &config);
     friend std::ostream & operator<<(std::ostream &os, const Config &A) { A.display(os); return os; }
 
-    static Config & getInstance() { static Config instance; return instance; }
+    static Config & get() { static Config instance; return instance; }
 
-    static std::string getInputFile(void)     { return Config::getInstance().inputFile; }
-    static std::string getOutputFile(void)     { return Config::getInstance().outputFile; }
+    static std::string getInputFile(void)     { return Config::get().inputFile; }
+    static std::string getOutputFile(void)     { return Config::get().outputFile; }
 
-    static bool isLeadingSet(void) { return Config::getInstance().leading != Whitespace::unspecified; }
-    static bool isSpace(void) { return Config::getInstance().leading == Whitespace::space; }
-    static bool isTab(void) { return Config::getInstance().leading == Whitespace::tab; }
+    static bool isLeadingSet(void) { return Config::get().leading != Whitespace::unspecified; }
+    static bool isSpace(void) { return Config::get().leading == Whitespace::space; }
+    static bool isTab(void) { return Config::get().leading == Whitespace::tab; }
 
-    static bool isTrailingSet(void) { return Config::getInstance().trailing != EndOfLine::unspecified; }
-    static bool isDos(void) { return Config::getInstance().trailing == EndOfLine::dos; }
-    static bool isUnix(void) { return Config::getInstance().trailing == EndOfLine::unix; }
+    static bool isTrailingSet(void) { return Config::get().trailing != EndOfLine::unspecified; }
+    static bool isDos(void) { return Config::get().trailing == EndOfLine::dos; }
+    static bool isUnix(void) { return Config::get().trailing == EndOfLine::unix; }
 
-    static bool isValid(void) { return !Config::getInstance().inputFile.empty();}
+    static bool isValid(void) { return !Config::get().inputFile.empty();}
 
 
 };
