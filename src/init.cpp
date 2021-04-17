@@ -78,7 +78,7 @@ static auto help(const char * const name)
  * @param  argv - command line argument vector.
  * @return error value or 0 if no errors.
  */
-static int parseCommandLine(int argc, char *argv[])
+int parseCommandLine(int argc, char *argv[], Config &config)
 {
     while (1)
     {
@@ -106,14 +106,14 @@ static int parseCommandLine(int argc, char *argv[])
             case 'h': return help(argv[0]);
             case 'v': return version(argv[0]);
 
-            case 'i': Config::setInputFile(std::string(optarg)); break;
-            case 'o': Config::setOutputFile(std::string(optarg)); break;
+            case 'i': config.setInputFile(std::string(optarg)); break;
+            case 'o': config.setOutputFile(std::string(optarg)); break;
 
-            case 'd': Config::setDos();     break;
-            case 'u': Config::setUnix();    break;
+            case 'd': config.setDos();     break;
+            case 'u': config.setUnix();    break;
 
-            case 's': Config::setSpaces();  break;
-            case 't': Config::setTabs();    break;
+            case 's': config.setSpaces();  break;
+            case 't': config.setTabs();    break;
 
             default:
                 help(argv[0]);
@@ -139,7 +139,7 @@ int init(int argc, char *argv[])
     static std::once_flag virgin;
     int ret = 0;
 
-    std::call_once(virgin, [&](){ ret = parseCommandLine(argc, argv); });
+    std::call_once(virgin, [&](){ ret = parseCommandLine(argc, argv, Config::getInstance()); });
 
     return ret;
 }

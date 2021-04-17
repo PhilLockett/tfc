@@ -59,23 +59,22 @@ private:
     Whitespace leading;
     EndOfLine trailing;
 
+    void setInputFile(std::string name) { Config::getInstance().inputFile = name; }
+    void setOutputFile(std::string name) { Config::getInstance().outputFile = name; }
+    void setSpaces() { Config::getInstance().leading = Whitespace::space; }
+    void setTabs() { Config::getInstance().leading = Whitespace::tab; }
+    void setDos() { Config::getInstance().trailing = EndOfLine::dos; }
+    void setUnix() { Config::getInstance().trailing = EndOfLine::unix; }
 
 public:
 //- Delete the copy constructor and assignement operator.
     Config(const Config &) = delete;
     void operator=(const Config &) = delete;
 
+    friend int parseCommandLine(int argc, char *argv[], Config &config);
     friend std::ostream & operator<<(std::ostream &os, const Config &A) { A.display(os); return os; }
-    friend int init(int argc, char *argv[]);
 
     static Config & getInstance() { static Config instance; return instance; }
-
-    static void setInputFile(std::string name) { Config::getInstance().inputFile = name; }
-    static void setOutputFile(std::string name) { Config::getInstance().outputFile = name; }
-    static void setSpaces() { Config::getInstance().leading = Whitespace::space; }
-    static void setTabs() { Config::getInstance().leading = Whitespace::tab; }
-    static void setDos() { Config::getInstance().trailing = EndOfLine::dos; }
-    static void setUnix() { Config::getInstance().trailing = EndOfLine::unix; }
 
     static std::string getInputFile(void)     { return Config::getInstance().inputFile; }
     static std::string getOutputFile(void)     { return Config::getInstance().outputFile; }
