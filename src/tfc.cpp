@@ -90,7 +90,10 @@ int main(int argc, char *argv[])
 //- If all is well, generate the file.
     if (Config::isValid())
     {
-        process();
+        if (!Config::isChangeRequested())
+        {
+            summary();
+        }
     }
 
     return 0;

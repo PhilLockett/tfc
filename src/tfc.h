@@ -87,6 +87,8 @@ public:
     static bool isDos(void) { return Config::get().trailing == EndOfLine::dos; }
     static bool isUnix(void) { return Config::get().trailing == EndOfLine::unix; }
 
+    static bool isChangeRequested(void) { return isLeadingSet() || isTrailingSet(); }
+
     static bool isValid(void) { return !Config::get().inputFile.empty();}
 
 
@@ -99,7 +101,7 @@ public:
  *
  */
 extern int init(int argc, char *argv[]);
-extern int process(void);
+extern int summary(void);
 
 
 #endif //!defined _TFC_H_INCLUDED_

@@ -126,22 +126,23 @@ std::string State::swap(void)
 
 void State::displaySummary(std::ostream &os)
 {
-    os << '\n';
-    os << "Lines:\t" << lines << '\n';
-    if (dos)
-        os << "Dos:\t" << dos << '\n';
-    if (unix)
-        os << "Unix:\t" << unix << '\n';
-    if (neither)
-        os << "Neither:\t" << neither << '\n';
+    os << "  Total Lines:\t" << lines << '\n';
+    os << "Line begining:\n";
     if (spOnly)
-        os << "Space:\t" << spOnly << '\n';
+        os << "  Space:\t" << spOnly << '\n';
     if (tabOnly)
-        os << "Tab:\t" << tabOnly << '\n';
+        os << "  Tab:\t\t" << tabOnly << '\n';
+    if (neither)
+        os << "  Neither:\t" << neither << '\n';
     if (both)
-        os << "Both:\t" << both << '\n';
+        os << "  Both:\t\t" << both << '\n';
+    os << "Line ending:\n";
+    if (dos)
+        os << "  Dos:\t\t" << dos << '\n';
+    if (unix)
+        os << "  Unix:\t\t" << unix << '\n';
     if (malformed)
-        os << "Malformed:\t" << malformed << '\n';
+        os << "  Malformed:\t" << malformed << '\n';
     os << '\n';
 }
 
@@ -204,7 +205,7 @@ void State::processAllOther(void)
  *
  * @return error value or 0 if no errors.
  */
-int process(void)
+int summary(void)
 {
     const std::string & filename{Config::getInputFile()};
     std::cout << filename << '\n';
@@ -226,12 +227,6 @@ int process(void)
 
             default:    state.processAllOther();
             }
-
-            // std::cout << state.swap() << ' ' << (int)(state.e) << '\n';
-            std::cout << state.swap();
-
-            if (state.event == '\n')
-                std::cout << '\n';
         }
     }
 
