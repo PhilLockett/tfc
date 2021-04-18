@@ -204,7 +204,7 @@ void State::processAllOther(void)
  */
 int process(void)
 {
-    const std::string filename{Config::getInputFile()};
+    const std::string & filename{Config::getInputFile()};
     std::cout << filename << '\n';
     State state{};
 
