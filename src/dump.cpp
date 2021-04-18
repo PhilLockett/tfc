@@ -91,112 +91,121 @@ std::string swap(char s)
     return std::string{s, ' ', '\0'};
 }
 
-int go(std::string filename)
+struct State
+{
+	char event;
+	bool start{true};
+	bool space{};
+	bool tab{};
+	bool cr{};
+	bool lf{};
+	int lines{};
+	int neither{};
+	int spOnly{};
+	int tabOnly{};
+	int both{};
+	int malformed{};
+	int dos{};
+	int unix{};
+	void displaySummary(std::ostream &os);
+
+};
+
+void State::displaySummary(std::ostream &os)
+{
+    os << '\n';
+    os << "Lines:\t" << lines << '\n';
+    if (dos)
+        os << "Dos:\t" << dos << '\n';
+    if (unix)
+        os << "Unix:\t" << unix << '\n';
+    if (neither)
+        os << "Neither:\t" << neither << '\n';
+    if (spOnly)
+        os << "Space:\t" << spOnly << '\n';
+    if (tabOnly)
+        os << "Tab:\t" << tabOnly << '\n';
+    if (both)
+        os << "Both:\t" << both << '\n';
+    if (malformed)
+        os << "Malformed:\t" << malformed << '\n';
+    os << '\n';
+}
+
+static int go(std::string filename)
 {
     std::cout << filename << '\n';
-    bool start{true};
-    bool space{};
-    bool tab{};
-    bool cr{};
-    bool lf{};
-    int lines{};
-    int neither{};
-    int spOnly{};
-    int tabOnly{};
-    int both{};
-    int malformed{};
-    int dos{};
-    int unix{};
+    State state{};
 
     if (std::ifstream is{filename, std::ios::binary | std::ios::ate})
     {
-        char b;
         auto size = is.tellg();
         is.seekg(0);
-        while (is.read(&b, 1))
+        while (is.read(&(state.event), 1))
         {
-            switch (b)
+            switch (state.event)
             {
             case '\t':
-                if (start)
-                    tab = true;
+                if (state.start)
+                    state.tab = true;
                 break;
 
             case ' ':
-                if (start)
-                    space = true;
+                if (state.start)
+                    state.space = true;
                 break;
 
             case '\n':
-                if (cr)
-                    ++dos;
+                if (state.cr)
+                    ++(state.dos);
                 else
                 {
-                    ++unix;
-                    lf = true;
+                    ++(state.unix);
+                    state.lf = true;
                 }
-                ++lines;
-                if (tab)
+                ++(state.lines);
+                if (state.tab)
                 {
-                    if (space)
-                        ++both;
+                    if (state.space)
+                        ++(state.both);
                     else
-                        ++tabOnly;
+                        ++(state.tabOnly);
                 }
                 else
                 {
-                    if (space)
-                        ++spOnly;
+                    if (state.space)
+                        ++(state.spOnly);
                     else
-                        ++neither;
+                        ++(state.neither);
                 }
-                tab = false;
-                space = false;
-                start = true;
-                cr = false;
+                state.tab = false;
+                state.space = false;
+                state.start = true;
+                state.cr = false;
                 break;
 
             case '\r':
-                if (lf)
-                    ++malformed;
-                cr = true;
-                lf = false;
+                if (state.lf)
+                    ++(state.malformed);
+                state.cr = true;
+                state.lf = false;
                 break;
 
             default:
-                start = false;
-                lf = false;
-                cr = false;
-
-                // tab = false;
-                // space = false;
+                state.start = false;
+                state.lf = false;
+                state.cr = false;
             }
 
-            // std::cout << swap(b) << ' ' << (int)(b) << '\n';
-            std::cout << swap(b);
+            // std::cout << swap(state.e) << ' ' << (int)(state.e) << '\n';
+            std::cout << swap(state.event);
 
-            if (b == '\n')
+            if (state.event == '\n')
                 std::cout << '\n';
         }
     }
 
-    std::cout << '\n';
-    std::cout << "Lines:\t" << lines << '\n';
-    if (dos)
-        std::cout << "Dos:\t" << dos << '\n';
-    if (unix)
-        std::cout << "Unix:\t" << unix << '\n';
-    if (neither)
-        std::cout << "Neither:\t" << neither << '\n';
-    if (spOnly)
-        std::cout << "Space:\t" << spOnly << '\n';
-    if (tabOnly)
-        std::cout << "Tab:\t" << tabOnly << '\n';
-    if (both)
-        std::cout << "Both:\t" << both << '\n';
-    if (malformed)
-        std::cout << "Malformed:\t" << malformed << '\n';
-    std::cout << '\n';
+    state.displaySummary(std::cout);
 
     return 0;
 }
