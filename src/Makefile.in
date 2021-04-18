@@ -99,7 +99,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_tfc_OBJECTS = tfc.$(OBJEXT) summary.$(OBJEXT) init.$(OBJEXT)
+am_tfc_OBJECTS = tfc.$(OBJEXT) transform.$(OBJEXT) summary.$(OBJEXT) \
+	init.$(OBJEXT)
 tfc_OBJECTS = $(am_tfc_OBJECTS)
 tfc_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -118,7 +119,7 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/init.Po ./$(DEPDIR)/summary.Po \
-	./$(DEPDIR)/tfc.Po
+	./$(DEPDIR)/tfc.Po ./$(DEPDIR)/transform.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -262,6 +263,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 tfc_SOURCES = \
 	tfc.cpp tfc.h \
+	transform.cpp \
 	summary.cpp \
 	init.cpp
 
@@ -370,6 +372,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/summary.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfc.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/transform.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -521,6 +524,7 @@ distclean: distclean-am
 		-rm -f ./$(DEPDIR)/init.Po
 	-rm -f ./$(DEPDIR)/summary.Po
 	-rm -f ./$(DEPDIR)/tfc.Po
+	-rm -f ./$(DEPDIR)/transform.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -569,6 +573,7 @@ maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/init.Po
 	-rm -f ./$(DEPDIR)/summary.Po
 	-rm -f ./$(DEPDIR)/tfc.Po
+	-rm -f ./$(DEPDIR)/transform.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
