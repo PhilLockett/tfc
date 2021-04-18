@@ -47,7 +47,7 @@
 21b5
 2BA0 Downward
 */
-
+#if 0
 bool isWhiteSpace(char s)
 {
     switch (s)
@@ -90,26 +90,43 @@ std::string swap(char s)
     }
     return std::string{s, ' ', '\0'};
 }
-
+#endif
 struct State
 {
-	char event;
-	bool start{true};
-	bool space{};
-	bool tab{};
-	bool cr{};
-	bool lf{};
-	int lines{};
-	int neither{};
-	int spOnly{};
-	int tabOnly{};
-	int both{};
-	int malformed{};
-	int dos{};
-	int unix{};
-	void displaySummary(std::ostream &os);
-
+    char event;
+    bool start{true};
+    bool space{};
+    bool tab{};
+    bool cr{};
+    bool lf{};
+    int lines{};
+    int neither{};
+    int spOnly{};
+    int tabOnly{};
+    int both{};
+    int malformed{};
+    int dos{};
+    int unix{};
+    void processTab(void) { if (start) tab = true; }
+    void processSpace(void) { if (start) space = true; }
+    void processLineFeed(void);
+    void processCarriageReturn(void);
+    void processAllOther(void);
+    std::string swap(void);
+    void displaySummary(std::ostream &os);
 };
+
+std::string State::swap(void)
+{
+    switch (event)
+    {
+    case '\t': return "▶ ";
+    case ' ': return "⯀ ";
+    case '\n': return "LF";
+    case '\r': return "CR"; //"⮠";
+    }
+    return std::string{event, ' ', '\0'};
+}
 
 void State::displaySummary(std::ostream &os)
 {
@@ -132,8 +149,62 @@ void State::displaySummary(std::ostream &os)
     os << '\n';
 }
 
-static int go(std::string filename)
+void State::processLineFeed(void)
 {
+    if (cr)
+        ++dos;
+    else
+    {
+        ++unix;
+        lf = true;
+    }
+
+    ++lines;
+
+    if (tab)
+    {
+        if (space)
+            ++both;
+        else
+            ++tabOnly;
+    }
+    else
+    {
+        if (space)
+            ++spOnly;
+        else
+            ++neither;
+    }
+
+    tab = false;
+    space = false;
+    start = true;
+    cr = false;
+}
+
+void State::processCarriageReturn(void)
+{
+    if (lf)
+        ++malformed;
+    cr = true;
+    lf = false;
+}
+
+void State::processAllOther(void)
+{
+    start = false;
+    lf = false;
+    cr = false;
+}
+
+/**
+ * Process the user specified file.
+ *
+ * @return error value or 0 if no errors.
+ */
+int process(void)
+{
+    const std::string filename{Config::getInputFile()};
     std::cout << filename << '\n';
     State state{};
 
@@ -145,60 +216,17 @@ static int go(std::string filename)
         {
             switch (state.event)
             {
-            case '\t':
-                if (state.start)
-                    state.tab = true;
-                break;
+            case '\t':  state.processTab();             break;
+            case ' ':   state.processSpace();           break;
 
-            case ' ':
-                if (state.start)
-                    state.space = true;
-                break;
+            case '\n':  state.processLineFeed();        break;
+            case '\r':  state.processCarriageReturn();  break;
 
-            case '\n':
-                if (state.cr)
-                    ++(state.dos);
-                else
-                {
-                    ++(state.unix);
-                    state.lf = true;
-                }
-                ++(state.lines);
-                if (state.tab)
-                {
-                    if (state.space)
-                        ++(state.both);
-                    else
-                        ++(state.tabOnly);
-                }
-                else
-                {
-                    if (state.space)
-                        ++(state.spOnly);
-                    else
-                        ++(state.neither);
-                }
-                state.tab = false;
-                state.space = false;
-                state.start = true;
-                state.cr = false;
-                break;
-
-            case '\r':
-                if (state.lf)
-                    ++(state.malformed);
-                state.cr = true;
-                state.lf = false;
-                break;
-
-            default:
-                state.start = false;
-                state.lf = false;
-                state.cr = false;
+            default:    state.processAllOther();
             }
 
-            // std::cout << swap(state.e) << ' ' << (int)(state.e) << '\n';
-            std::cout << swap(state.event);
+            // std::cout << state.swap() << ' ' << (int)(state.e) << '\n';
+            std::cout << state.swap();
 
             if (state.event == '\n')
                 std::cout << '\n';
@@ -210,21 +238,3 @@ static int go(std::string filename)
     return 0;
 }
 
-/**
- * The bulk of the script generation work.
- *
- * @return error value or 0 if no errors.
- */
-int process(void)
-{
-#if 0
-    std::string filenameCRLF = "TestCRLF.txt";
-    std::string filenameLF = "TestLF.txt";
-
-    go(filenameCRLF);
-    go(filenameLF);
-#else
-    go(Config::getInputFile());
-#endif
-    return 0;
-}
