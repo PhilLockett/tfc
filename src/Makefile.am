@@ -1,6 +1,6 @@
 bin_PROGRAMS = tfc
 tfc_SOURCES = \
 	tfc.cpp tfc.h \
-	dump.cpp \
+	summary.cpp \
 	init.cpp
 
