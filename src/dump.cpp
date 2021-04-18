@@ -30,24 +30,13 @@
 #include "tfc.h"
 
 
-/**
- * @section Internal constants and variables.
- *
- */
-
-
-
-/**
- * @section main code.
- *
- */
+#if 0
 /*
 2356 APL function
 23CE return symbol
 21b5
 2BA0 Downward
 */
-#if 0
 bool isWhiteSpace(char s)
 {
     switch (s)
@@ -91,6 +80,13 @@ std::string swap(char s)
     return std::string{s, ' ', '\0'};
 }
 #endif
+
+
+/**
+ * @section Internal constants and variables.
+ *
+ */
+
 struct State
 {
     char event;
@@ -196,6 +192,12 @@ void State::processAllOther(void)
     lf = false;
     cr = false;
 }
+
+
+/**
+ * @section main code.
+ *
+ */
 
 /**
  * Process the user specified file.
