@@ -12,7 +12,8 @@ To clone, install and run this code, execute the following unix/linux commands:
 
     git clone https://github.com/PhilLockett/tfc.git
     cd tfc/
-	chmod +x configure
+	chmod +x fix.sh
+    ./fix.sh
     ./configure
     make
     sudo make install
