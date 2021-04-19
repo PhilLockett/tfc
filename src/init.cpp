@@ -65,6 +65,9 @@ static auto help(const char * const name)
     std::cout << "\t-u --unix\t\tUnix style End-Of-line.\n";
     std::cout << "\t-s --space\t\tUse leading spaces.\n";
     std::cout << "\t-t --tab\t\tUse leading tabs.\n";
+    std::cout << "\t-2 \t\t\t2 space tab size.\n";
+    std::cout << "\t-4 \t\t\t4 space tab size (default).\n";
+    std::cout << "\t-8 \t\t\t8 space tab size.\n";
 
     return 1;
 }
@@ -97,7 +100,7 @@ int parseCommandLine(int argc, char *argv[], Config &config)
             {0,0,0,0}
         };
 
-        optchr = getopt_long(argc, argv ,"hvi:o:dust", long_options, &option_index);
+        optchr = getopt_long(argc, argv ,"hvi:o:dust248", long_options, &option_index);
         if (optchr == -1)
             return 0;
 
@@ -114,6 +117,10 @@ int parseCommandLine(int argc, char *argv[], Config &config)
 
             case 's': config.setSpaces();  break;
             case 't': config.setTabs();    break;
+
+            case '2': config.setTabSize(2);break;
+            case '4': config.setTabSize(4);break;
+            case '8': config.setTabSize(8);break;
 
             default:
                 help(argv[0]);

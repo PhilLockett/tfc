@@ -45,7 +45,10 @@ class Config
 {
 private:
 //- Hide the default constructor and destructor.
-    Config(void) : inputFile{}, outputFile{}, leading{Whitespace::unspecified}, trailing{EndOfLine::unspecified}
+    Config(void) : 
+        inputFile{}, outputFile{}, 
+        leading{Whitespace::unspecified}, trailing{EndOfLine::unspecified},
+        tabSize{4}
         {  }
     virtual ~Config(void) {}
 
@@ -58,6 +61,7 @@ private:
     std::string outputFile;
     Whitespace leading;
     EndOfLine trailing;
+    size_t tabSize;
 
     void setInputFile(std::string name) { Config::get().inputFile = name; }
     void setOutputFile(std::string name) { Config::get().outputFile = name; }
@@ -65,6 +69,7 @@ private:
     void setTabs() { Config::get().leading = Whitespace::tab; }
     void setDos() { Config::get().trailing = EndOfLine::dos; }
     void setUnix() { Config::get().trailing = EndOfLine::unix; }
+    void setTabSize(size_t size) { tabSize = size; }
 
 public:
 //- Delete the copy constructor and assignement operator.
@@ -76,8 +81,8 @@ public:
 
     static Config & get() { static Config instance; return instance; }
 
-    static std::string getInputFile(void)     { return Config::get().inputFile; }
-    static std::string getOutputFile(void)     { return Config::get().outputFile; }
+    static std::string & getInputFile(void)     { return Config::get().inputFile; }
+    static std::string & getOutputFile(void)    { return Config::get().outputFile; }
 
     static bool isLeadingSet(void) { return Config::get().leading != Whitespace::unspecified; }
     static bool isSpace(void) { return Config::get().leading == Whitespace::space; }
@@ -87,7 +92,9 @@ public:
     static bool isDos(void) { return Config::get().trailing == EndOfLine::dos; }
     static bool isUnix(void) { return Config::get().trailing == EndOfLine::unix; }
 
-    static bool isChangeRequested(void) { return isLeadingSet() || isTrailingSet(); }
+    static size_t getTabSize(void) { return Config::get().tabSize; }
+
+    static bool isChangeRequested(void) { return isLeadingSet() || isTrailingSet() || !getOutputFile().empty();}
 
     static bool isValid(void) { return !Config::get().inputFile.empty();}
 
