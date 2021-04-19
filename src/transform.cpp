@@ -193,10 +193,9 @@ int process(void)
     State state{};
     std::string ret{};
 
-    if (std::ifstream is{filename, std::ios::binary | std::ios::ate})
+    if (std::ifstream is{filename, std::ios::binary})
     {
-        is.seekg(0);
-        while (is.read(&(state.event), 1))
+        for (is.get(state.event); !is.eof(); is.get(state.event))
         {
             switch (state.event)
             {
