@@ -39,6 +39,8 @@ namespace transform
 
 struct State
 {
+    enum class Pos { start, begining, middle, end };
+    Pos pos{Pos::start};
     char event;
     bool start{true};
     bool space{};
@@ -53,11 +55,11 @@ struct State
     int malformed{};
     int dos{};
     int unix{};
-    void processTab(void) { if (start) tab = true; }
-    void processSpace(void) { if (start) space = true; }
-    void processLineFeed(void);
-    void processCarriageReturn(void);
-    void processAllOther(void);
+    std::string processTab(void);
+    std::string processSpace(void);
+    std::string processLineFeed(void);
+    std::string processCarriageReturn(void);
+    std::string processAllOther(void);
     std::string swap(void);
     void displaySummary(std::ostream &os);
 };
@@ -96,52 +98,81 @@ void State::displaySummary(std::ostream &os)
     os << '\n';
 }
 
-void State::processLineFeed(void)
+std::string State::processTab(void)
 {
-    if (cr)
-        ++dos;
-    else
+    std::string ret{};
+    switch (pos)
     {
-        ++unix;
-        lf = true;
-    }
+    case Pos::start:
+        pos = Pos::begining;    // fall through.
 
-    ++lines;
-
-    if (tab)
-    {
-        if (space)
-            ++both;
+    case Pos::begining:
+        if (Config::isSpace())
+            ret = "    ";
         else
-            ++tabOnly;
-    }
-    else
-    {
-        if (space)
-            ++spOnly;
-        else
-            ++neither;
+            ret = "\t";
+        break;
+
+    case Pos::middle:
+            ret = "\t";
+        break;
+
+    case Pos::end:
+        pos = Pos::begining;
+            ret = "\t";
+        break;
     }
 
-    tab = false;
-    space = false;
-    start = true;
-    cr = false;
+    return ret;
 }
 
-void State::processCarriageReturn(void)
+std::string State::processSpace(void)
 {
-    if (lf)
-        ++malformed;
-    cr = true;
-    lf = false;
+    std::string ret{};
+    switch (pos)
+    {
+    case Pos::start:
+        pos = Pos::begining;    // fall through.
+
+    case Pos::begining:
+        if (Config::isTab())
+            ret = "\t";
+        else
+            ret = " ";
+        break;
+
+    case Pos::middle:
+            ret = " ";
+        break;
+
+    case Pos::end:
+        pos = Pos::begining;
+            ret = " ";
+        break;
+    }
+
+    return ret;
 }
 
-void State::processAllOther(void)
+std::string State::processLineFeed(void)
 {
-    start = false;
-    lf = false;
-    cr = false;
+    pos = Pos::end;
+
+    return std::string{ "\n" };
+}
+
+std::string State::processCarriageReturn(void)
+{
+    pos = Pos::end;
+
+    return std::string{ "" };
+}
+
+std::string State::processAllOther(void)
+{
+    pos = Pos::middle;
+
+    return std::string{ event, '\0' };
 }
 
 
@@ -160,6 +191,7 @@ int process(void)
     const std::string & filename{Config::getInputFile()};
     std::cout << filename << '\n';
     State state{};
+    std::string ret{};
 
     if (std::ifstream is{filename, std::ios::binary | std::ios::ate})
     {
@@ -168,18 +200,17 @@ int process(void)
         {
             switch (state.event)
             {
-            case '\t':  state.processTab();             break;
-            case ' ':   state.processSpace();           break;
+            case '\t':  ret = state.processTab();             break;
+            case ' ':   ret = state.processSpace();           break;
 
-            case '\n':  state.processLineFeed();        break;
-            case '\r':  state.processCarriageReturn();  break;
+            case '\n':  ret = state.processLineFeed();        break;
+            case '\r':  ret = state.processCarriageReturn();  break;
 
-            default:    state.processAllOther();
+            default:    ret = state.processAllOther();
             }
+            std::cout << ret;
         }
     }
-
-    state.displaySummary(std::cout);
 
     return 0;
 }
