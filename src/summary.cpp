@@ -112,6 +112,7 @@ struct State
     void processAllOther(void);
     std::string swap(void);
     void displaySummary(std::ostream &os);
+    void displayDebug(std::ostream &os);
 };
 
 std::string State::swap(void)
@@ -145,6 +146,19 @@ void State::displaySummary(std::ostream &os)
         os << "  Unix:\t\t" << unix << '\n';
     if (malformed)
         os << "  Malformed:\t" << malformed << '\n';
+    os << '\n';
+}
+
+void State::displayDebug(std::ostream &os)
+{
+    os << lines;
+    os << " " << spOnly;
+    os << " " << tabOnly;
+    os << " " << neither;
+    os << " " << both;
+    os << " " << dos;
+    os << " " << unix;
+    os << " " << malformed;
     os << '\n';
 }
 
@@ -230,7 +244,10 @@ int process(void)
         }
     }
 
-    state.displaySummary(std::cout);
+    if (Config::isDebug())
+        state.displayDebug(std::cout);
+    else
+        state.displaySummary(std::cout);
 
     return 0;
 }

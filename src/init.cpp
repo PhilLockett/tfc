@@ -100,7 +100,7 @@ int parseCommandLine(int argc, char *argv[], Config &config)
             {0,0,0,0}
         };
 
-        optchr = getopt_long(argc, argv ,"hvi:o:dust248", long_options, &option_index);
+        optchr = getopt_long(argc, argv ,"hvi:o:dust248x", long_options, &option_index);
         if (optchr == -1)
             return 0;
 
@@ -121,6 +121,8 @@ int parseCommandLine(int argc, char *argv[], Config &config)
             case '2': config.setTabSize(2);break;
             case '4': config.setTabSize(4);break;
             case '8': config.setTabSize(8);break;
+
+            case 'x': config.enableDebug();break;
 
             default:
                 help(argv[0]);

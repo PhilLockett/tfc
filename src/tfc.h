@@ -48,7 +48,7 @@ private:
     Config(void) : 
         inputFile{}, outputFile{}, 
         leading{Whitespace::unspecified}, trailing{EndOfLine::unspecified},
-        tabSize{4}
+        tabSize{4}, debug{}
         {  }
     virtual ~Config(void) {}
 
@@ -62,6 +62,7 @@ private:
     Whitespace leading;
     EndOfLine trailing;
     size_t tabSize;
+    bool debug;
 
     void setInputFile(std::string name) { Config::get().inputFile = name; }
     void setOutputFile(std::string name) { Config::get().outputFile = name; }
@@ -70,7 +71,7 @@ private:
     void setDos() { Config::get().trailing = EndOfLine::dos; }
     void setUnix() { Config::get().trailing = EndOfLine::unix; }
     void setTabSize(size_t size) { tabSize = size; }
-
+    void enableDebug(void) {debug = true; }
 public:
 //- Delete the copy constructor and assignement operator.
     Config(const Config &) = delete;
@@ -94,9 +95,10 @@ public:
 
     static size_t getTabSize(void) { return Config::get().tabSize; }
 
-    static bool isChangeRequested(void) { return isLeadingSet() || isTrailingSet() || !getOutputFile().empty();}
+    static bool isChangeRequested(void) { return isLeadingSet() || isTrailingSet() || !getOutputFile().empty(); }
 
-    static bool isValid(void) { return !Config::get().inputFile.empty();}
+    static bool isValid(void) { return !Config::get().inputFile.empty(); }
+    static bool isDebug(void) { return Config::get().debug; }
 
 
 };
