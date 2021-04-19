@@ -215,7 +215,6 @@ int process(void)
 
     if (std::ifstream is{filename, std::ios::binary | std::ios::ate})
     {
-        auto size = is.tellg();
         is.seekg(0);
         while (is.read(&(state.event), 1))
         {
