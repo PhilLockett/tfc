@@ -72,6 +72,7 @@ private:
     void setUnix() { Config::get().trailing = EndOfLine::unix; }
     void setTabSize(size_t size) { tabSize = size; }
     void enableDebug(void) {debug = true; }
+
 public:
 //- Delete the copy constructor and assignement operator.
     Config(const Config &) = delete;
@@ -99,7 +100,6 @@ public:
 
     static bool isValid(void) { return !Config::get().inputFile.empty(); }
     static bool isDebug(void) { return Config::get().debug; }
-
 
 };
 
