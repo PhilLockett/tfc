@@ -177,6 +177,63 @@ std::string State::processAllOther(void)
 
 
 /**
+ * @section newline handler.
+ *
+ */
+
+bool isNewline(char event)
+{
+    enum class State { start, CR_rec, LF_rec, other };
+    static State state{State::start};
+
+    bool newline = false;
+
+    switch (state)
+    {
+    case State::start:
+        switch (event)
+        {
+        case '\r':  state = State::CR_rec;  break;
+        case '\n':  state = State::LF_rec;  break;
+        default:    state = State::other;
+        }
+    break;
+
+    case State::CR_rec:
+        switch (event)
+        {
+        case '\r':  break;
+
+        case '\n':
+        default:    state = State::other;
+        }
+        newline = true;
+    break;
+
+    case State::LF_rec:
+        switch (event)
+        {
+        case '\n':  break;
+
+        case '\r':
+        default:    state = State::other;
+        }
+        newline = true;
+    break;
+
+    case State::other:
+        switch (event)
+        {
+        case '\r':  state = State::CR_rec;  break;
+        case '\n':  state = State::LF_rec;  break;
+        default:    state = State::other;
+        }
+    }
+
+    return newline;
+}
+
+/**
  * @section main code.
  *
  */
