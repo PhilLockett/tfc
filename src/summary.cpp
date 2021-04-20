@@ -111,6 +111,7 @@ struct State
     void processCarriageReturn(void);
     void processAllOther(void);
     std::string swap(void);
+    void display(std::ostream &os);
     void displaySummary(std::ostream &os);
     void displayDebug(std::ostream &os);
 };
@@ -162,6 +163,14 @@ void State::displayDebug(std::ostream &os)
     os << " " << unix;
     os << " " << malformed;
     os << '\n';
+}
+
+void State::display(std::ostream &os)
+{
+    if (Config::isDebug())
+        displayDebug(os);
+    else
+        displaySummary(os);
 }
 
 void State::processTab(void)
@@ -271,17 +280,11 @@ int process(void)
 
     if (std::ofstream os{Config::getOutputFile(), std::ios::out})
     {
-        if (Config::isDebug())
-            state.displayDebug(os);
-        else
-            state.displaySummary(os);
+        state.display(os);
     }
     else
     {
-        if (Config::isDebug())
-            state.displayDebug(std::cout);
-        else
-            state.displaySummary(std::cout);
+        state.display(std::cout);
     }
 
     return 0;
