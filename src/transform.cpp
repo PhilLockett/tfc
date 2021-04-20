@@ -37,8 +37,13 @@ namespace transform
  *
  */
 
-struct State
+class State
 {
+public:
+    int process(std::ostream &os, std::ifstream &is);
+
+private:
+
     enum class Pos { start, begining, middle, end };
     Pos pos{Pos::start};
     char event;
@@ -60,21 +65,9 @@ struct State
     std::string processLineFeed(void);
     std::string processCarriageReturn(void);
     std::string processAllOther(void);
-    std::string swap(void);
     void displaySummary(std::ostream &os);
 };
 
-std::string State::swap(void)
-{
-    switch (event)
-    {
-    case '\t': return "▶ ";
-    case ' ': return "⯀ ";
-    case '\n': return "LF";
-    case '\r': return "CR"; //"⮠";
-    }
-    return std::string{event, ' ', '\0'};
-}
 
 void State::displaySummary(std::ostream &os)
 {
@@ -158,7 +151,7 @@ std::string State::processLineFeed(void)
 {
     pos = Pos::end;
 
-    return std::string{ "\n" };
+    return std::string{ "" };
 }
 
 std::string State::processCarriageReturn(void)
@@ -172,7 +165,7 @@ std::string State::processAllOther(void)
 {
     pos = Pos::middle;
 
-    return std::string{ event, '\0' };
+    return std::string{ event };
 }
 
 
@@ -238,6 +231,36 @@ bool isNewline(char event)
  *
  */
 
+int State::process(std::ostream &os, std::ifstream &is)
+{
+    const std::string dosNewline{'\r', '\n' };
+    const std::string unixNewline{'\n' };
+    const std::string newline{Config::isDos() ? dosNewline : unixNewline};
+
+    std::string ret{};
+
+    for (is.get(event); !is.eof(); is.get(event))
+    {
+        switch (event)
+        {
+        case '\t':  ret = processTab();             break;
+        case ' ':   ret = processSpace();           break;
+
+        case '\n':  ret = processLineFeed();        break;
+        case '\r':  ret = processCarriageReturn();  break;
+
+        default:    ret = processAllOther();
+        }
+
+        if (isNewline(event))
+            os << newline;
+		os << ret;
+    }
+
+    return 0;
+}
+
+
 /**
  * Process the user specified file.
  *
@@ -245,27 +268,24 @@ bool isNewline(char event)
  */
 int process(void)
 {
-    const std::string & filename{Config::getInputFile()};
-    std::cout << filename << '\n';
+    const std::string & inputFile{Config::getInputFile()};
     State state{};
-    std::string ret{};
 
-    if (std::ifstream is{filename, std::ios::binary})
+    std::ifstream is{inputFile, std::ios::binary};
+    if (is.is_open()) 
     {
-        for (is.get(state.event); !is.eof(); is.get(state.event))
+        if (std::ofstream os{Config::getOutputFile(), std::ios::binary})
         {
-            switch (state.event)
-            {
-            case '\t':  ret = state.processTab();             break;
-            case ' ':   ret = state.processSpace();           break;
-
-            case '\n':  ret = state.processLineFeed();        break;
-            case '\r':  ret = state.processCarriageReturn();  break;
-
-            default:    ret = state.processAllOther();
-            }
-            std::cout << ret;
+            state.process(os, is);
         }
+        else
+        {
+            state.process(std::cout, is);
+        }
+    }
+    else
+    {
+        std::cerr << "Unable to open file " << inputFile << '\n';
     }
 
     return 0;
