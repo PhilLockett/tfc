@@ -47,49 +47,13 @@ private:
     enum class Pos { start, begining, middle, end };
     Pos pos{Pos::start};
     char event;
-    bool start{true};
-    bool space{};
-    bool tab{};
-    bool cr{};
-    bool lf{};
-    int lines{};
-    int neither{};
-    int spOnly{};
-    int tabOnly{};
-    int both{};
-    int malformed{};
-    int dos{};
-    int unix{};
     std::string processTab(void);
     std::string processSpace(void);
     std::string processLineFeed(void);
     std::string processCarriageReturn(void);
     std::string processAllOther(void);
-    void displaySummary(std::ostream &os);
 };
 
-
-void State::displaySummary(std::ostream &os)
-{
-    os << "  Total Lines:\t" << lines << '\n';
-    os << "Line begining:\n";
-    if (spOnly)
-        os << "  Space:\t" << spOnly << '\n';
-    if (tabOnly)
-        os << "  Tab:\t\t" << tabOnly << '\n';
-    if (neither)
-        os << "  Neither:\t" << neither << '\n';
-    if (both)
-        os << "  Both:\t\t" << both << '\n';
-    os << "Line ending:\n";
-    if (dos)
-        os << "  Dos:\t\t" << dos << '\n';
-    if (unix)
-        os << "  Unix:\t\t" << unix << '\n';
-    if (malformed)
-        os << "  Malformed:\t" << malformed << '\n';
-    os << '\n';
-}
 
 std::string State::processTab(void)
 {
