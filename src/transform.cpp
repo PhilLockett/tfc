@@ -37,6 +37,16 @@ namespace transform
  *
  */
 
+static bool isNewLine(char event)
+{
+    switch (event)
+    {
+    case '\n': 
+    case '\r': return true;
+    }
+    return false;
+}
+
 class State
 {
 public:
@@ -115,7 +125,7 @@ std::string State::processLineFeed(void)
 {
     pos = Pos::end;
 
-    return std::string{ "" };
+    return std::string{};
 }
 
 std::string State::processCarriageReturn(void)
@@ -138,12 +148,18 @@ std::string State::processAllOther(void)
  *
  */
 
-bool isNewline(char event)
+static std::string processNewline(char event)
 {
     enum class State { start, CR_rec, LF_rec, other };
     static State state{State::start};
 
-    bool newline = false;
+    const auto ignore{!Config::isTrailingSet()};
+    if ((ignore) && (isNewLine(event)))
+        return std::string{event};
+
+    const std::string dosNewline{ '\r', '\n' };
+    const std::string unixNewline{ '\n' };
+    const std::string newline{Config::isDos() ? dosNewline : unixNewline};
 
     switch (state)
     {
@@ -164,7 +180,7 @@ bool isNewline(char event)
         case '\n':
         default:    state = State::other;
         }
-        newline = true;
+        return newline;
     break;
 
     case State::LF_rec:
@@ -175,7 +191,7 @@ bool isNewline(char event)
         case '\r':
         default:    state = State::other;
         }
-        newline = true;
+        return newline;
     break;
 
     case State::other:
@@ -187,7 +203,7 @@ bool isNewline(char event)
         }
     }
 
-    return newline;
+    return std::string{};
 }
 
 /**
@@ -197,10 +213,6 @@ bool isNewline(char event)
 
 int State::process(std::ostream &os, std::ifstream &is)
 {
-    const std::string dosNewline{'\r', '\n' };
-    const std::string unixNewline{'\n' };
-    const std::string newline{Config::isDos() ? dosNewline : unixNewline};
-
     std::string ret{};
 
     for (is.get(event); !is.eof(); is.get(event))
@@ -216,9 +228,7 @@ int State::process(std::ostream &os, std::ifstream &is)
         default:    ret = processAllOther();
         }
 
-        if (isNewline(event))
-            os << newline;
-		os << ret;
+        os << processNewline(event) << ret;
     }
 
     return 0;
