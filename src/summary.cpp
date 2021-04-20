@@ -89,8 +89,12 @@ std::string swap(char s)
  *
  */
 
-struct State
+class State
 {
+public:
+    int process(std::ostream &os, std::ifstream &is);
+
+private:
     char event;
     bool start{true};
     bool space{};
@@ -110,23 +114,10 @@ struct State
     void processLineFeed(void);
     void processCarriageReturn(void);
     void processAllOther(void);
-    std::string swap(void);
     void display(std::ostream &os);
     void displaySummary(std::ostream &os);
     void displayDebug(std::ostream &os);
 };
-
-std::string State::swap(void)
-{
-    switch (event)
-    {
-    case '\t': return "▶ ";
-    case ' ': return "⯀ ";
-    case '\n': return "LF";
-    case '\r': return "CR"; //"⮠";
-    }
-    return std::string{event, ' ', '\0'};
-}
 
 void State::displaySummary(std::ostream &os)
 {
@@ -246,6 +237,28 @@ void State::processAllOther(void)
 }
 
 
+int State::process(std::ostream &os, std::ifstream &is)
+{
+    for (is.get(event); !is.eof(); is.get(event))
+    {
+        switch (event)
+        {
+        case '\t':  processTab();               break;
+        case ' ':   processSpace();             break;
+    
+        case '\n':  processLineFeed();          break;
+        case '\r':  processCarriageReturn();    break;
+    
+        default:    processAllOther();
+        }
+    }
+    
+    display(os);
+
+    return 0;
+}
+
+
 /**
  * @section main code.
  *
@@ -258,33 +271,24 @@ void State::processAllOther(void)
  */
 int process(void)
 {
-    const std::string & filename{Config::getInputFile()};
+    const std::string & inputFile{Config::getInputFile()};
     State state{};
 
-    if (std::ifstream is{filename, std::ios::binary})
+    std::ifstream is{inputFile, std::ios::binary};
+    if (is.is_open()) 
     {
-        for (is.get(state.event); !is.eof(); is.get(state.event))
+        if (std::ofstream os{Config::getOutputFile(), std::ios::out})
         {
-            switch (state.event)
-            {
-            case '\t':  state.processTab();             break;
-            case ' ':   state.processSpace();           break;
-
-            case '\n':  state.processLineFeed();        break;
-            case '\r':  state.processCarriageReturn();  break;
-
-            default:    state.processAllOther();
-            }
+            state.process(os, is);
         }
-    }
-
-    if (std::ofstream os{Config::getOutputFile(), std::ios::out})
-    {
-        state.display(os);
+        else
+        {
+            state.process(std::cout, is);
+        }
     }
     else
     {
-        state.display(std::cout);
+        std::cerr << "Unable to open file " << inputFile << '\n';
     }
 
     return 0;
