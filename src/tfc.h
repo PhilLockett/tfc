@@ -95,7 +95,7 @@ public:
 
     static size_t getTabSize(void) { return Config::get().tabSize; }
 
-    static bool isChangeRequested(void) { return isLeadingSet() || isTrailingSet() || !getOutputFile().empty(); }
+    static bool isChangeRequested(void) { return isLeadingSet() || isTrailingSet(); }
 
     static bool isValid(void) { return !Config::get().inputFile.empty(); }
     static bool isDebug(void) { return Config::get().debug; }

@@ -129,12 +129,13 @@ std::string State::swap(void)
 
 void State::displaySummary(std::ostream &os)
 {
+    os << Config::getInputFile() << '\n';
     os << "  Total Lines:\t" << lines << '\n';
     os << "Line begining:\n";
     if (spOnly)
-        os << "  Space:\t" << spOnly << '\n';
+        os << "  Space only:\t" << spOnly << '\n';
     if (tabOnly)
-        os << "  Tab:\t\t" << tabOnly << '\n';
+        os << "  Tab only:\t" << tabOnly << '\n';
     if (neither)
         os << "  Neither:\t" << neither << '\n';
     if (both)
@@ -151,6 +152,7 @@ void State::displaySummary(std::ostream &os)
 
 void State::displayDebug(std::ostream &os)
 {
+    os << Config::getInputFile() << '\n';
     os << lines;
     os << " " << spOnly;
     os << " " << tabOnly;
@@ -224,7 +226,6 @@ void State::processAllOther(void)
 int process(void)
 {
     const std::string & filename{Config::getInputFile()};
-    std::cout << filename << '\n';
     State state{};
 
     if (std::ifstream is{filename, std::ios::binary})
@@ -244,10 +245,20 @@ int process(void)
         }
     }
 
-    if (Config::isDebug())
-        state.displayDebug(std::cout);
+    if (std::ofstream os{Config::getOutputFile(), std::ios::out})
+    {
+        if (Config::isDebug())
+            state.displayDebug(os);
+        else
+            state.displaySummary(os);
+    }
     else
-        state.displaySummary(std::cout);
+    {
+        if (Config::isDebug())
+            state.displayDebug(std::cout);
+        else
+            state.displaySummary(std::cout);
+    }
 
     return 0;
 }
