@@ -105,8 +105,8 @@ struct State
     int malformed{};
     int dos{};
     int unix{};
-    void processTab(void) { if (start) tab = true; }
-    void processSpace(void) { if (start) space = true; }
+    void processTab(void);
+    void processSpace(void);
     void processLineFeed(void);
     void processCarriageReturn(void);
     void processAllOther(void);
@@ -164,6 +164,24 @@ void State::displayDebug(std::ostream &os)
     os << '\n';
 }
 
+void State::processTab(void)
+{
+    if (start)
+        tab = true;
+
+    lf = false;
+    cr = false;
+}
+
+void State::processSpace(void)
+{
+    if (start)
+        space = true;
+
+    lf = false;
+    cr = false;
+}
+
 void State::processLineFeed(void)
 {
     if (cr)
@@ -200,8 +218,14 @@ void State::processLineFeed(void)
 void State::processCarriageReturn(void)
 {
     if (lf)
+    {
         ++malformed;
-    cr = true;
+        --unix;		// Was counted as unix, but shouldn't be.
+        cr = false;
+    }
+    else
+        cr = true;
+
     lf = false;
 }
 
