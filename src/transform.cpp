@@ -32,33 +32,66 @@
 namespace transform
 {
 
+class Status
+{
+public:
+	Status(void) :
+		size{Config::getTabSize()},
+		ignoreHead{!Config::isLeadingSet()},
+		ignoreTail{!Config::isTrailingSet()},
+		space{Config::isSpace()},
+		tab{Config::isTab()},
+		newline{Config::isDos() ? std::string("\r\n") : std::string("\n") },
+		state{State::start},
+		nlState{NLState::start},
+		event{},
+		column{}
+		{}
+    int process(std::ostream &os, std::ifstream &is);
+
+private:
+    enum class State { start, begining, middle, end };
+    enum class NLState { start, CR_rec, LF_rec, other };
+
+    const size_t size;
+    const bool ignoreHead;
+    const bool ignoreTail;
+    const bool space;
+    const bool tab;
+    const std::string newline;
+
+    State state;
+    NLState nlState;
+	char event;
+	int column;
+	
+	bool isNewLine(void) const {    return ((event == '\n') || (event == '\r')); }
+	std::string padding(void);
+	std::string processChar(void);
+	std::string processNewline(void);
+};
 
 /**
  * @section Utility functions.
  *
  */
 
-static bool isNewLine(char event)
+std::string Status::padding(void)
 {
-    switch (event)
+    if (tab)
     {
-    case '\n': 
-    case '\r': return true;
-    }
-    return false;
-}
-
-static std::string padding(int column)
-{
-    if (Config::isTab())
-    {
-        const int size = Config::getTabSize();
         const int tabs = column / size;
         const int spaces = column - (tabs * size);
+
         return std::string(tabs, '\t') + std::string(spaces, ' ');
     }
 
-    return std::string(column, ' ');
+    if (space)
+    {
+        return std::string(column, ' ');
+    }
+
+    return std::string{};
 }
 
 
@@ -67,28 +100,28 @@ static std::string padding(int column)
  *
  */
  
-std::string processChar(char event)
+std::string Status::processChar(void)
 {
-    enum class State { start, begining, middle, end };
-    static State state{State::start};
-    static int column{};
-    const auto size{Config::getTabSize()};
-    const auto ignore{!Config::isLeadingSet()};
+    if (ignoreHead)
+    {
+		if (isNewLine())
+		{
+			state = State::end;
+			return std::string{};
+		}
 
-    if (isNewLine(event))
+        return std::string{event};
+    }
+
+    if (isNewLine())
     {
         std::string ret{};
         if (state == State::begining)
-            ret = padding(column);
+            ret = padding();
 
         state = State::end;
 
         return ret;
-    }
-
-    if (ignore)
-    {
-        return std::string{event};
     }
 
     switch (state)
@@ -125,7 +158,7 @@ std::string processChar(char event)
 
         default:
             state = State::middle;
-            return padding(column) + std::string{event};
+            return padding() + std::string{event};
         }
     break;
 
@@ -163,58 +196,51 @@ std::string processChar(char event)
  *
  */
 
-static std::string processNewline(char event)
+std::string Status::processNewline(void)
 {
-    enum class State { start, CR_rec, LF_rec, other };
-    static State state{State::start};
-
-    const auto ignore{!Config::isTrailingSet()};
-    if ((ignore) && (isNewLine(event)))
+    if ((ignoreTail) && (isNewLine()))
         return std::string{event};
 
-    const std::string dosNewline{ '\r', '\n' };
-    const std::string unixNewline{ '\n' };
-    const std::string newline{Config::isDos() ? dosNewline : unixNewline};
 
-    switch (state)
+    switch (nlState)
     {
-    case State::start:
+    case NLState::start:
         switch (event)
         {
-        case '\r':  state = State::CR_rec;  break;
-        case '\n':  state = State::LF_rec;  break;
-        default:    state = State::other;
+        case '\r':  nlState = NLState::CR_rec;  break;
+        case '\n':  nlState = NLState::LF_rec;  break;
+        default:    nlState = NLState::other;
         }
     break;
 
-    case State::CR_rec:
+    case NLState::CR_rec:
         switch (event)
         {
         case '\r':  break;
 
         case '\n':
-        default:    state = State::other;
+        default:    nlState = NLState::other;
         }
         return newline;
     break;
 
-    case State::LF_rec:
+    case NLState::LF_rec:
         switch (event)
         {
         case '\n':  break;
 
         case '\r':
-        default:    state = State::other;
+        default:    nlState = NLState::other;
         }
         return newline;
     break;
 
-    case State::other:
+    case NLState::other:
         switch (event)
         {
-        case '\r':  state = State::CR_rec;  break;
-        case '\n':  state = State::LF_rec;  break;
-        default:    state = State::other;
+        case '\r':  nlState = NLState::CR_rec;  break;
+        case '\n':  nlState = NLState::LF_rec;  break;
+        default:    nlState = NLState::other;
         }
     }
 
@@ -227,13 +253,11 @@ static std::string processNewline(char event)
  *
  */
 
-int processFile(std::ostream &os, std::ifstream &is)
+int Status::process(std::ostream &os, std::ifstream &is)
 {
-    char event;
-
     for (is.get(event); !is.eof(); is.get(event))
     {
-        os << processChar(event) << processNewline(event);
+        os << processChar() << processNewline();
     }
 
     return 0;
@@ -247,6 +271,7 @@ int processFile(std::ostream &os, std::ifstream &is)
  */
 int process(void)
 {
+    Status state{};
     const std::string & inputFile{Config::getInputFile()};
 
     std::ifstream is{inputFile, std::ios::binary};
@@ -254,11 +279,11 @@ int process(void)
     {
         if (std::ofstream os{Config::getOutputFile(), std::ios::binary})
         {
-            processFile(os, is);
+            state.process(os, is);
         }
         else
         {
-            processFile(std::cout, is);
+            state.process(std::cout, is);
         }
     }
     else
