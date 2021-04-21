@@ -46,7 +46,7 @@ static bool isNewLine(char event)
     }
     return false;
 }
-
+#if 0
 class State
 {
 public:
@@ -141,6 +141,126 @@ std::string State::processAllOther(void)
 
     return std::string{ event };
 }
+int State::process(std::ostream &os, std::ifstream &is)
+{
+    std::string ret{};
+
+    for (is.get(event); !is.eof(); is.get(event))
+    {
+
+        os << processChar(event) << processNewline(event);
+    }
+
+    return 0;
+}
+#endif
+std::string padding(int column)
+{
+    if (Config::isTab())
+    {
+        const int size = Config::getTabSize();
+        const int tabs = column / size;
+        const int spaces = column - (tabs * size);
+        return std::string(tabs, '\t') + std::string(spaces, ' ');
+    }
+
+    return std::string(column, ' ');
+}
+
+
+/**
+ * @section whitespace handler.
+ *
+ */
+std::string processChar(char event)
+{
+    enum class State { start, begining, middle, end };
+    static State state{State::start};
+    static int column{};
+    const auto size{Config::getTabSize()};
+    const auto ignore{!Config::isLeadingSet()};
+
+    if (isNewLine(event))
+    {
+        std::string ret{};
+        if (state == State::begining)
+            ret = padding(column);
+
+        state = State::end;
+
+        return ret;
+    }
+
+    if (ignore)
+    {
+        return std::string{event};
+    }
+
+    switch (state)
+    {
+    case State::start:
+        switch (event)
+        {
+        case ' ':
+            state = State::begining;
+            ++column;
+            break;
+
+        case '\t':
+            state = State::begining;
+            column = ((column / size) + 1) * size;
+            break;
+
+        default:
+            state = State::middle;
+            return std::string{event};
+        }
+    break;
+
+    case State::begining:
+        switch (event)
+        {
+        case ' ':
+            ++column;
+            break;
+
+        case '\t':
+            column = ((column / size) + 1) * size;
+            break;
+
+        default:
+            state = State::middle;
+            return padding(column) + std::string{event};
+        }
+    break;
+
+    case State::middle:
+        return std::string{event};
+    break;
+
+    case State::end:
+        switch (event)
+        {
+        case ' ':
+            state = State::begining;
+            column = 1;
+            break;
+
+        case '\t':
+            state = State::begining;
+            column = size;
+            break;
+
+        default:
+            state = State::middle;
+            return std::string{event};
+        }
+    break;
+
+    }
+
+    return std::string{};
+}
 
 
 /**
@@ -211,24 +331,14 @@ static std::string processNewline(char event)
  *
  */
 
-int State::process(std::ostream &os, std::ifstream &is)
+int processFile(std::ostream &os, std::ifstream &is)
 {
-    std::string ret{};
+    char event;
 
     for (is.get(event); !is.eof(); is.get(event))
     {
-        switch (event)
-        {
-        case '\t':  ret = processTab();             break;
-        case ' ':   ret = processSpace();           break;
 
-        case '\n':  ret = processLineFeed();        break;
-        case '\r':  ret = processCarriageReturn();  break;
-
-        default:    ret = processAllOther();
-        }
-
-        os << processNewline(event) << ret;
+        os << processChar(event) << processNewline(event);
     }
 
     return 0;
@@ -243,18 +353,18 @@ int State::process(std::ostream &os, std::ifstream &is)
 int process(void)
 {
     const std::string & inputFile{Config::getInputFile()};
-    State state{};
+//    State state{};
 
     std::ifstream is{inputFile, std::ios::binary};
     if (is.is_open()) 
     {
         if (std::ofstream os{Config::getOutputFile(), std::ios::binary})
         {
-            state.process(os, is);
+            processFile(os, is);
         }
         else
         {
-            state.process(std::cout, is);
+            processFile(std::cout, is);
         }
     }
     else
