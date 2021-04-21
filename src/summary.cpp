@@ -32,57 +32,6 @@
 namespace summary
 {
 
-#if 0
-/*
-2356 APL function
-23CE return symbol
-21b5
-2BA0 Downward
-*/
-bool isWhiteSpace(char s)
-{
-    switch (s)
-    {
-    case '\t': 
-    case ' ': return true;
-    }
-    return false;
-}
-bool isNewLine(char s)
-{
-    switch (s)
-    {
-    case '\n': 
-    case '\r': return true;
-    }
-    return false;
-}
-
-std::string swap1(char s)
-{
-    switch (s)
-    {
-    case '\t': return "▶";
-    case ' ': return "⯀";
-    case '\n': return "⍖";
-    case '\r': return "⏎"; //"⮠";
-    }
-    return std::string{s, '\0'};
-}
-
-std::string swap(char s)
-{
-    switch (s)
-    {
-    case '\t': return "▶ ";
-    case ' ': return "⯀ ";
-    case '\n': return "LF";
-    case '\r': return "CR"; //"⮠";
-    }
-    return std::string{s, ' ', '\0'};
-}
-#endif
-
 
 /**
  * @section Internal constants and variables.
@@ -252,7 +201,7 @@ int State::process(std::ostream &os, std::ifstream &is)
         default:    processAllOther();
         }
     }
-    
+
     display(os);
 
     return 0;

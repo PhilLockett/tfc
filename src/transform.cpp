@@ -32,8 +32,9 @@
 namespace transform
 {
 
+
 /**
- * @section Internal constants and variables.
+ * @section Utility functions.
  *
  */
 
@@ -46,115 +47,8 @@ static bool isNewLine(char event)
     }
     return false;
 }
-#if 0
-class State
-{
-public:
-    int process(std::ostream &os, std::ifstream &is);
 
-private:
-
-    enum class Pos { start, begining, middle, end };
-    Pos pos{Pos::start};
-    char event;
-    std::string processTab(void);
-    std::string processSpace(void);
-    std::string processLineFeed(void);
-    std::string processCarriageReturn(void);
-    std::string processAllOther(void);
-};
-
-
-std::string State::processTab(void)
-{
-    std::string ret{};
-    switch (pos)
-    {
-    case Pos::start:
-        pos = Pos::begining;    // fall through.
-
-    case Pos::begining:
-        if (Config::isSpace())
-            ret = "    ";
-        else
-            ret = "\t";
-        break;
-
-    case Pos::middle:
-            ret = "\t";
-        break;
-
-    case Pos::end:
-        pos = Pos::begining;
-            ret = "\t";
-        break;
-    }
-
-    return ret;
-}
-
-std::string State::processSpace(void)
-{
-    std::string ret{};
-    switch (pos)
-    {
-    case Pos::start:
-        pos = Pos::begining;    // fall through.
-
-    case Pos::begining:
-        if (Config::isTab())
-            ret = "\t";
-        else
-            ret = " ";
-        break;
-
-    case Pos::middle:
-            ret = " ";
-        break;
-
-    case Pos::end:
-        pos = Pos::begining;
-            ret = " ";
-        break;
-    }
-
-    return ret;
-}
-
-std::string State::processLineFeed(void)
-{
-    pos = Pos::end;
-
-    return std::string{};
-}
-
-std::string State::processCarriageReturn(void)
-{
-    pos = Pos::end;
-
-    return std::string{ "" };
-}
-
-std::string State::processAllOther(void)
-{
-    pos = Pos::middle;
-
-    return std::string{ event };
-}
-int State::process(std::ostream &os, std::ifstream &is)
-{
-    std::string ret{};
-
-    for (is.get(event); !is.eof(); is.get(event))
-    {
-
-        os << processChar(event) << processNewline(event);
-    }
-
-    return 0;
-}
-#endif
-std::string padding(int column)
+static std::string padding(int column)
 {
     if (Config::isTab())
     {
@@ -172,6 +66,7 @@ std::string padding(int column)
  * @section whitespace handler.
  *
  */
+ 
 std::string processChar(char event)
 {
     enum class State { start, begining, middle, end };
@@ -326,6 +221,7 @@ static std::string processNewline(char event)
     return std::string{};
 }
 
+
 /**
  * @section main code.
  *
@@ -337,7 +233,6 @@ int processFile(std::ostream &os, std::ifstream &is)
 
     for (is.get(event); !is.eof(); is.get(event))
     {
-
         os << processChar(event) << processNewline(event);
     }
 
@@ -353,7 +248,6 @@ int processFile(std::ostream &os, std::ifstream &is)
 int process(void)
 {
     const std::string & inputFile{Config::getInputFile()};
-//    State state{};
 
     std::ifstream is{inputFile, std::ios::binary};
     if (is.is_open()) 
