@@ -294,7 +294,7 @@ int Status::process(std::ostream &os, std::ifstream &is)
 int process(void)
 {
     Status state{};
-    const std::string & inputFile{Config::getInputFile()};
+    const auto & inputFile{Config::getInputFile()};
 
     std::ifstream is{inputFile, std::ios::binary};
     if (is.is_open()) 

@@ -28,6 +28,7 @@
 
 #include <iostream>
 #include <string>
+#include <filesystem>
 
 #if !defined ELEMENTS
 #define ELEMENTS(A) (sizeof(A)/sizeof(A[0]))
@@ -57,8 +58,8 @@ private:
     enum class Whitespace { unspecified, space, tab };
     enum class EndOfLine { unspecified, dos, unix };
 
-    std::string inputFile;
-    std::string outputFile;
+    std::filesystem::path inputFile;
+    std::filesystem::path outputFile;
     Whitespace leading;
     EndOfLine trailing;
     size_t tabSize;
@@ -83,8 +84,8 @@ public:
 
     static Config & get() { static Config instance; return instance; }
 
-    static std::string & getInputFile(void)     { return Config::get().inputFile; }
-    static std::string & getOutputFile(void)    { return Config::get().outputFile; }
+    static std::filesystem::path & getInputFile(void)     { return Config::get().inputFile; }
+    static std::filesystem::path & getOutputFile(void)    { return Config::get().outputFile; }
 
     static bool isLeadingSet(void) { return Config::get().leading != Whitespace::unspecified; }
     static bool isSpace(void) { return Config::get().leading == Whitespace::space; }

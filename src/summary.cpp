@@ -70,7 +70,7 @@ private:
 
 void State::displaySummary(std::ostream &os)
 {
-    os << Config::getInputFile() << '\n';
+    os << Config::getInputFile().string() << '\n';
     os << "  Total Lines:\t" << lines << '\n';
     os << "Line begining:\n";
     if (spOnly)
@@ -93,7 +93,7 @@ void State::displaySummary(std::ostream &os)
 
 void State::displayDebug(std::ostream &os)
 {
-    os << Config::getInputFile() << '\n';
+    os << Config::getInputFile().string() << '\n';
     os << lines;
     os << " " << spOnly;
     os << " " << tabOnly;
@@ -220,8 +220,8 @@ int State::process(std::ostream &os, std::ifstream &is)
  */
 int process(void)
 {
-    const std::string & inputFile{Config::getInputFile()};
     State state{};
+    const auto & inputFile{Config::getInputFile()};
 
     std::ifstream is{inputFile, std::ios::binary};
     if (is.is_open()) 
