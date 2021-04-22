@@ -207,40 +207,62 @@ std::string Status::processNewline(void)
     case NLState::start:
         switch (event)
         {
-        case '\r':  nlState = NLState::CR_rec;  break;
-        case '\n':  nlState = NLState::LF_rec;  break;
-        default:    nlState = NLState::other;
+        case '\r':
+            nlState = NLState::CR_rec;
+            return newline;
+
+        case '\n':
+            nlState = NLState::LF_rec;
+            return newline;
+
+        default:
+            nlState = NLState::other;
         }
     break;
 
     case NLState::CR_rec:
         switch (event)
         {
-        case '\r':  break;
+        case '\r':
+            return newline;
 
         case '\n':
-        default:    nlState = NLState::other;
+            nlState = NLState::other;
+            break;
+
+        default:
+            nlState = NLState::other;
         }
-        return newline;
     break;
 
     case NLState::LF_rec:
         switch (event)
         {
-        case '\n':  break;
-
         case '\r':
-        default:    nlState = NLState::other;
+            nlState = NLState::other;
+            break;
+
+        case '\n':
+            return newline;
+
+        default:
+            nlState = NLState::other;
         }
-        return newline;
     break;
 
     case NLState::other:
         switch (event)
         {
-        case '\r':  nlState = NLState::CR_rec;  break;
-        case '\n':  nlState = NLState::LF_rec;  break;
-        default:    nlState = NLState::other;
+        case '\r':
+            nlState = NLState::CR_rec;
+            return newline;
+
+        case '\n':
+            nlState = NLState::LF_rec;
+            return newline;
+
+        default:
+            nlState = NLState::other;
         }
     }
 
