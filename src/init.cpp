@@ -54,7 +54,8 @@ static auto help(const char * const name)
 {
     std::cout << "Usage: " << name << " [Options]\n";
     std::cout << '\n';
-    std::cout << "  Analyzes the given file for consistent leading whitespace and line endings\n";
+    std::cout << "  Analyzes the given file for consistent leading whitespace and line endings.\n";
+    std::cout << "  Corrects leading whitespace and line endings as required.\n";
     std::cout << '\n';
     std::cout << "  Options:\n";
     std::cout << "\t-h --help \t\tThis help page and nothing else.\n";
@@ -65,9 +66,9 @@ static auto help(const char * const name)
     std::cout << "\t-u --unix\t\tUnix style End-Of-line.\n";
     std::cout << "\t-s --space\t\tUse leading spaces.\n";
     std::cout << "\t-t --tab\t\tUse leading tabs.\n";
-    std::cout << "\t-2 \t\t\t2 space tab size.\n";
-    std::cout << "\t-4 \t\t\t4 space tab size (default).\n";
-    std::cout << "\t-8 \t\t\t8 space tab size.\n";
+    std::cout << "\t-2 \t\t\tSet tab size to 2 spaces.\n";
+    std::cout << "\t-4 \t\t\tSet tab size to 4 spaces (default).\n";
+    std::cout << "\t-8 \t\t\tSet tab size to 8 spaces.\n";
 
     return 1;
 }

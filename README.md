@@ -1,9 +1,10 @@
 # tfc
-'tfc' is a command-line utility Text File Checker.
+'tfc' is a command-line utility Text File Checker and corrector.
 
 ## Overview
 The utility checks text files for consistent leading whitespace and line 
-endings.
+endings. It can either report on the state of a file or correct inconsistencies
+depending on the options provided.
 
 To use 'tfc' you will need a C++ compiler and 'make' utility installed. 
 
@@ -27,11 +28,8 @@ connect to GitHub. The following command will create a tar file called
     make dist
 
 ## Installing from tar file
-The install process described in the INSTALL document is a generic 
-description of the install process. The install process is also described 
-in the README.md document. For completeness the install process is also 
-described below. All three descriptions are essentially the same and clearly, 
-it only needs to be installed once.
+The install process described in the INSTALL document is generic. For 
+completeness the install process is also described here.
 
 The following command will unpack the tar file.
 
