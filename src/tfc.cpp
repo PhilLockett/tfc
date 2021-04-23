@@ -59,6 +59,11 @@ void Config::display(std::ostream &os) const
     {
         os << "Newlines will be unchanged\n";
     }
+    os << "Tab size: " << Config::getTabSize() << '\n';
+    if (Config::isReplacing())
+        os << "Overwriting source file contents.\n";
+    if (Config::isDebug())
+        os << "Generating debug summary.\n";
 }
 
 bool Config::isValid(bool showErrors)
