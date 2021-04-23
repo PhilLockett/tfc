@@ -47,7 +47,7 @@ class Config
 private:
 //- Hide the default constructor and destructor.
     Config(void) : 
-        inputFile{}, outputFile{}, 
+        inputFile{}, outputFile{}, replace{},
         leading{Whitespace::unspecified}, trailing{EndOfLine::unspecified},
         tabSize{4}, debug{}
         {  }
@@ -60,6 +60,7 @@ private:
 
     std::filesystem::path inputFile;
     std::filesystem::path outputFile;
+    bool replace;
     Whitespace leading;
     EndOfLine trailing;
     size_t tabSize;
@@ -67,6 +68,7 @@ private:
 
     void setInputFile(std::string name) { Config::get().inputFile = name; }
     void setOutputFile(std::string name) { Config::get().outputFile = name; }
+    void setReplaceFile(std::string name) { Config::get().inputFile = name; replace = true; }
     void setSpaces() { Config::get().leading = Whitespace::space; }
     void setTabs() { Config::get().leading = Whitespace::tab; }
     void setDos() { Config::get().trailing = EndOfLine::dos; }
@@ -86,6 +88,7 @@ public:
 
     static std::filesystem::path & getInputFile(void)     { return Config::get().inputFile; }
     static std::filesystem::path & getOutputFile(void)    { return Config::get().outputFile; }
+    static bool isReplacing(void) { return Config::get().replace; }
 
     static bool isLeadingSet(void) { return Config::get().leading != Whitespace::unspecified; }
     static bool isSpace(void) { return Config::get().leading == Whitespace::space; }
@@ -98,8 +101,9 @@ public:
     static size_t getTabSize(void) { return Config::get().tabSize; }
 
     static bool isChangeRequested(void) { return isLeadingSet() || isTrailingSet(); }
+    static bool isSummary(void) { return !isChangeRequested(); }
 
-    static bool isValid(void) { return !Config::get().inputFile.empty(); }
+    static bool isValid(bool showErrors = false);
     static bool isDebug(void) { return Config::get().debug; }
 
 };

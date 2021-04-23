@@ -238,6 +238,8 @@ int process(void)
     else
     {
         std::cerr << "Unable to open file " << inputFile << '\n';
+
+        return 1;
     }
 
     return 0;

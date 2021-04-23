@@ -62,6 +62,7 @@ static auto help(const char * const name)
     std::cout << "\t-v --version \t\tDisplay version.\n";
     std::cout << "\t-i --input <file> \tInput file name.\n";
     std::cout << "\t-o --output <file> \tOutput file name (default: console).\n";
+    std::cout << "\t-r --replace <file> \tReplace file with transformed version.\n";
     std::cout << "\t-d --dos\t\tDOS style End-Of-line.\n";
     std::cout << "\t-u --unix\t\tUnix style End-Of-line.\n";
     std::cout << "\t-s --space\t\tUse leading spaces.\n";
@@ -84,6 +85,13 @@ static auto help(const char * const name)
  */
 int parseCommandLine(int argc, char *argv[], Config &config)
 {
+    if (argc < 2)
+    {
+        help(argv[0]);
+
+        return -1;
+    }
+
     while (1)
     {
         int option_index = 0;
@@ -94,6 +102,7 @@ int parseCommandLine(int argc, char *argv[], Config &config)
             {"version", no_argument,0,'v'},
             {"input",   required_argument,0,'i'},
             {"output",  required_argument,0,'o'},
+            {"replace", required_argument,0,'r'},
             {"dos",     no_argument,0,'d'},
             {"unix",    no_argument,0,'u'},
             {"space",   no_argument,0,'s'},
@@ -101,7 +110,7 @@ int parseCommandLine(int argc, char *argv[], Config &config)
             {0,0,0,0}
         };
 
-        optchr = getopt_long(argc, argv ,"hvi:o:dust248x", long_options, &option_index);
+        optchr = getopt_long(argc, argv ,"hvi:o:r:dust248x", long_options, &option_index);
         if (optchr == -1)
             return 0;
 
@@ -112,6 +121,7 @@ int parseCommandLine(int argc, char *argv[], Config &config)
 
             case 'i': config.setInputFile(std::string(optarg)); break;
             case 'o': config.setOutputFile(std::string(optarg)); break;
+            case 'r': config.setReplaceFile(std::string(optarg)); break;
 
             case 'd': config.setDos();     break;
             case 'u': config.setUnix();    break;

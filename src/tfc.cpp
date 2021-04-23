@@ -61,6 +61,64 @@ void Config::display(std::ostream &os) const
     }
 }
 
+bool Config::isValid(bool showErrors)
+{
+    namespace fs = std::filesystem;
+
+    const auto & inputFile{Config::getInputFile()};
+
+    if (inputFile.string().empty())
+    {
+        if (showErrors)
+            std::cerr << "\nInput (or replacement) file must be specified.\n";
+
+        return false;
+    }
+
+    if (!fs::exists(inputFile))
+    {
+        if (showErrors)
+        {
+            std::cerr << "\nInput file " << inputFile << " does not exist.\n";
+        }
+
+        return false;
+    }
+
+    if (Config::isReplacing() && Config::isSummary())
+    {
+        if (showErrors)
+        {
+            std::cerr << "\nCannot overwrite input file " << inputFile << " with a summary.\n";
+        }
+
+        return false;
+    }
+
+    const auto & outputFile{Config::getOutputFile()};
+
+    if (fs::exists(outputFile))
+    {
+        if (fs::equivalent(inputFile, outputFile))
+        {
+            if (showErrors)
+            {
+                std::cerr << "\nInput and output files are the same. To replace source file use:\n";
+                std::cerr << "\ttfc -r " << inputFile.string() << " [Options]\n";
+            }
+        
+            return false;
+        }
+
+        if (showErrors)
+        {
+            std::cerr << "\nWarning output file " << outputFile << " will be overwritten.\n";
+        }
+    }
+
+    return true;
+}
+
 
 /**
  * @section System entry point.
@@ -76,10 +134,15 @@ void Config::display(std::ostream &os) const
  */
 int main(int argc, char *argv[])
 {
-//- Get the command line parameters.
-    if (init(argc, argv) < 0)
+//- Process the command line parameters.
+    auto i = init(argc, argv);
+    if (i < 0)
     {
         return 1;
+    }
+    else if (i > 0)
+    {
+        return 0;
     }
 
 #if 0
@@ -87,17 +150,19 @@ int main(int argc, char *argv[])
 #endif
 
 
-//- If all is well, generate the file.
-    if (Config::isValid())
+    if (!Config::isValid(true))
     {
-        if (Config::isChangeRequested())
-        {
-            transform::process();
-        }
-        else
-        {
-            summary::process();
-        }
+        return 1;
+    }
+
+//- If all is well, generate the output.
+    if (Config::isChangeRequested())
+    {
+        return transform::process();
+    }
+    else
+    {
+        return summary::process();
     }
 
     return 0;

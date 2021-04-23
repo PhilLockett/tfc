@@ -299,7 +299,17 @@ int process(void)
     std::ifstream is{inputFile, std::ios::binary};
     if (is.is_open()) 
     {
-        if (std::ofstream os{Config::getOutputFile(), std::ios::binary})
+        if (Config::isReplacing())
+        {
+            auto tempFile{std::filesystem::temp_directory_path()};
+            tempFile /= inputFile;  // Temporary file path.
+            if (std::ofstream os{tempFile, std::ios::binary})
+            {
+                state.process(os, is);
+                std::filesystem::rename(tempFile, inputFile);   // Overwrite.
+            }
+        }
+        else if (std::ofstream os{Config::getOutputFile(), std::ios::binary})
         {
             state.process(os, is);
         }
@@ -311,6 +321,8 @@ int process(void)
     else
     {
         std::cerr << "Unable to open file " << inputFile << '\n';
+
+        return 1;
     }
 
     return 0;
