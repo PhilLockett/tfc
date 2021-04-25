@@ -11,7 +11,25 @@ To use 'tfc' you will need a C++ compiler and 'make' utility installed.
 ## Usage
 With 'tfc' installed the following command will display the help page:
 
-    tfc --help
+    $ tfc --help
+    Usage: tfc [Options]
+    
+      Analyzes the given file for consistent leading whitespace and line endings.
+      Corrects leading whitespace and line endings as required.
+    
+      Options:
+            -h --help               This help page and nothing else.
+            -v --version            Display version.
+            -i --input <file>       Input file name.
+            -o --output <file>      Output file name (default: console).
+            -r --replace <file>     Replace file with transformed version.
+            -d --dos                DOS style End-Of-line.
+            -u --unix               Unix style End-Of-line.
+            -s --space              Use leading spaces.
+            -t --tab                Use leading tabs.
+            -2                      Set tab size to 2 spaces.
+            -4                      Set tab size to 4 spaces (default).
+            -8                      Set tab size to 8 spaces.
 
 ### Changing the leading whitespace
 The leading whitespace of every line can be changed to either all spaces or
