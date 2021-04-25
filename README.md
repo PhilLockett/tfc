@@ -8,6 +8,37 @@ depending on the options provided.
 
 To use 'tfc' you will need a C++ compiler and 'make' utility installed. 
 
+## Usage
+With 'tfc' installed the following command will display the help page:
+
+    tfc --help
+
+### Changing the leading whitespace
+The leading whitespace of every line can be changed to either all spaces or
+tabs with the minimum number of space to make up the difference. The options
+'-2', '-4' or '-8' set the tab size in spaces. The column offset is calculated
+from the leading whitespace. If a tab is encountered the offset is incremented
+to the next tab stop based on tab size. When a non whitespace characters is
+found the column offset is used to create padding from tabs and/or spaces.
+The rest of teh line is left unchanged.
+
+### Changing the newline characters.
+The trailing new line can be changed to either a dos style carriage return line
+feed or a unix style line feed only even if the file contains a mix of these.
+
+### Summary generation
+If neither a whitespace or newline change is requested a summary is generated
+indicating the number of total number of lines, the number of lines that start
+with spaces or tabs or both and the number of lines the end with dos or unix
+newlines.
+
+### Files
+An input file must be specified. Output is sent to the console unless an output
+file is specified, this includes summary generation. The input file and the 
+output file cannot be the same file. If the input file is to be overwritten
+with the output, use the replace option to specify the file instead of input
+and output.
+
 ## Cloning and Installing
 To clone, install and run this code, execute the following unix/linux commands:
 
@@ -41,11 +72,6 @@ After unpacking, issue the following shell commands:
     ./configure
     make
     sudo make install
-
-## Setting up 'tfc' environment and Running
-With 'tfc' installed the following command will display the help page:
-
-    tfc --help
 
 ## Points of interest
 This code has the following points of interest:
