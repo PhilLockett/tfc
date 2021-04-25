@@ -11,7 +11,7 @@ To use 'tfc' you will need a C++ compiler and 'make' utility installed.
 ## Usage
 With 'tfc' installed the following command will display the help page:
 
-    $ **tfc --help**
+    $ tfc --help
     Usage: tfc [Options]
     
       Analyzes the given file for consistent leading whitespace and line endings.
