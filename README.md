@@ -1,6 +1,8 @@
 # tfc
 'tfc' is a command-line utility Text File Checker and corrector.
 
+**USE AT OWN RISK.**
+
 ## Overview
 The utility checks text files for consistent leading whitespace and line 
 endings. It can either report on the state of a file or correct inconsistencies
