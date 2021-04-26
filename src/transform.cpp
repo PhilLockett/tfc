@@ -35,18 +35,18 @@ namespace transform
 class Status
 {
 public:
-	Status(void) :
-		size{Config::getTabSize()},
-		ignoreHead{!Config::isLeadingSet()},
-		ignoreTail{!Config::isTrailingSet()},
-		space{Config::isSpace()},
-		tab{Config::isTab()},
-		newline{Config::isDos() ? std::string("\r\n") : std::string("\n") },
-		state{State::start},
-		nlState{NLState::start},
-		event{},
-		column{}
-		{}
+    Status(void) :
+        size{Config::getTabSize()},
+        ignoreHead{!Config::isLeadingSet()},
+        ignoreTail{!Config::isTrailingSet()},
+        space{Config::isSpace()},
+        tab{Config::isTab()},
+        newline{Config::isDos() ? std::string("\r\n") : std::string("\n") },
+        state{State::start},
+        nlState{NLState::start},
+        event{},
+        column{}
+        {}
     int process(std::ostream &os, std::ifstream &is);
 
 private:
@@ -62,13 +62,13 @@ private:
 
     State state;
     NLState nlState;
-	char event;
-	int column;
-	
-	bool isNewLine(void) const {    return ((event == '\n') || (event == '\r')); }
-	std::string padding(void);
-	std::string processChar(void);
-	std::string processNewline(void);
+    char event;
+    int column;
+    
+    bool isNewLine(void) const {    return ((event == '\n') || (event == '\r')); }
+    std::string padding(void);
+    std::string processChar(void);
+    std::string processNewline(void);
 };
 
 /**
@@ -104,11 +104,11 @@ std::string Status::processChar(void)
 {
     if (ignoreHead)
     {
-		if (isNewLine())
-		{
-			state = State::end;
-			return std::string{};
-		}
+        if (isNewLine())
+        {
+            state = State::end;
+            return std::string{};
+        }
 
         return std::string{event};
     }
