@@ -302,11 +302,17 @@ int process(void)
         if (Config::isReplacing())
         {
             auto tempFile{std::filesystem::temp_directory_path()};
-            tempFile /= inputFile;  // Temporary file path.
+            tempFile /= inputFile.filename();  // Temporary file path.
             if (std::ofstream os{tempFile, std::ios::binary})
             {
                 state.process(os, is);
                 std::filesystem::rename(tempFile, inputFile);   // Overwrite.
+            }
+            else
+            {
+                std::cerr << "Failed to open file " << tempFile << '\n';
+
+                return 1;
             }
         }
         else if (std::ofstream os{Config::getOutputFile(), std::ios::binary})
