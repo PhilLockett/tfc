@@ -101,7 +101,7 @@ To uninstall 'tfc' run the following command from the directory used to run
 
     sudo make uninstall
 
-Once unistalled, delete the directory (it can easily be cloned again).
+Once uninstalled, delete the directory (it can easily be cloned again).
 
 ## Points of interest
 This code has the following points of interest:
