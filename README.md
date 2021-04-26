@@ -70,6 +70,8 @@ To clone, install and run this code, execute the following unix/linux commands:
     make
     sudo make install
 
+Once installed, 'tfc' can be run from any directory.
+
 ## Creating a tar file
 Sometimes it is more convenient to use a tar file to share software than 
 connect to GitHub. The following command will create a tar file called 
@@ -92,6 +94,14 @@ After unpacking, issue the following shell commands:
     ./configure
     make
     sudo make install
+
+## Uninstalling and clean up
+To uninstall 'tfc' run the following command from the directory used to run
+'./configure', 'make' and 'make install':
+
+    sudo make uninstall
+
+Once unistalled, delete the directory (it can easily be cloned again).
 
 ## Points of interest
 This code has the following points of interest:
