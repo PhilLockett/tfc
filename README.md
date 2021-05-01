@@ -64,7 +64,7 @@ To clone, install and run this code, execute the following unix/linux commands:
 
     git clone https://github.com/PhilLockett/tfc.git
     cd tfc/
-	chmod +x fix.sh
+    chmod +x fix.sh
     ./fix.sh
     ./configure
     make
@@ -95,8 +95,8 @@ After unpacking, issue the following shell commands:
     make
     sudo make install
 
-## Uninstalling and clean up
-To uninstall 'tfc' run the following command from the directory used to run
+## Uninstalling and cleaning up
+To uninstall 'tfc', run the following command from the directory used to run
 './configure', 'make' and 'make install':
 
     sudo make uninstall
