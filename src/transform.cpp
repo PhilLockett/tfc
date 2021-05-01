@@ -29,8 +29,6 @@
 
 #include "tfc.h"
 
-namespace transform
-{
 
 class Status
 {
@@ -291,7 +289,7 @@ int Status::process(std::ostream &os, std::ifstream &is)
  *
  * @return error value or 0 if no errors.
  */
-int process(void)
+int processTransform(void)
 {
     Status state{};
     const auto & inputFile{Config::getInputFile()};
@@ -334,4 +332,3 @@ int process(void)
     return 0;
 }
 
-} // namespace transform

@@ -29,8 +29,6 @@
 
 #include "tfc.h"
 
-namespace summary
-{
 
 
 /**
@@ -218,7 +216,7 @@ int State::process(std::ostream &os, std::ifstream &is)
  *
  * @return error value or 0 if no errors.
  */
-int process(void)
+int processSummary(void)
 {
     State state{};
     const auto & inputFile{Config::getInputFile()};
@@ -245,4 +243,3 @@ int process(void)
     return 0;
 }
 
-} // namespace summary

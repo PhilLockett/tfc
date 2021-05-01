@@ -163,11 +163,11 @@ int main(int argc, char *argv[])
 //- If all is well, generate the output.
     if (Config::isChangeRequested())
     {
-        return transform::process();
+        return processTransform();
     }
     else
     {
-        return summary::process();
+        return processSummary();
     }
 
     return 0;

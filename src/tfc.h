@@ -116,15 +116,8 @@ public:
  */
 extern int init(int argc, char *argv[]);
 
-namespace transform
-{
-    extern int process(void);
-}
-
-namespace summary
-{
-    extern int process(void);
-}
+extern int processTransform(void);
+extern int processSummary(void);
 
 #endif //!defined _TFC_H_INCLUDED_
 
