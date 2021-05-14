@@ -70,12 +70,16 @@ private:
     void setTabSize(size_t size) { tabSize = size; }
     void enableDebug(void) {debug = true; }
 
+    int version(const char * const name);
+    int help(const char * const name);
+    int parseCommandLine(int argc, char *argv[]);
+
 public:
 //- Delete the copy constructor and assignement operator.
     Config(const Config &) = delete;
     void operator=(const Config &) = delete;
 
-    friend int parseCommandLine(int argc, char *argv[], Config &config);
+    int init(int argc, char *argv[]);
     friend std::ostream & operator<<(std::ostream &os, const Config &A) { A.display(os); return os; }
 
     static Config & instance() { static Config neo; return neo; }

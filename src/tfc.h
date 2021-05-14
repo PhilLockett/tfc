@@ -31,8 +31,6 @@
  * @section Common functions.
  *
  */
-extern int init(int argc, char *argv[]);
-
 extern int processTransform(void);
 extern int processSummary(void);
 

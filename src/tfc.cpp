@@ -42,7 +42,7 @@
 int main(int argc, char *argv[])
 {
 //- Process the command line parameters.
-    auto i = init(argc, argv);
+    auto i = Config::instance().init(argc, argv);
     if (i < 0)
     {
         return 1;
