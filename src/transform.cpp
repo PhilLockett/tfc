@@ -28,6 +28,7 @@
 #include <fstream>
 
 #include "tfc.h"
+#include "configuration.h"
 
 
 class Status
