@@ -5,7 +5,6 @@ config.status
 Makefile
 src/.deps/
 src/Makefile
-src/Makefile.in
 src/config.h
 src/stamp-h1
 src/*.o
