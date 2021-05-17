@@ -56,7 +56,6 @@ int main(int argc, char *argv[])
     std::cout << Config::instance() << '\n';
 #endif
 
-
     if (!Config::isValid(true))
     {
         return 1;
@@ -74,4 +73,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

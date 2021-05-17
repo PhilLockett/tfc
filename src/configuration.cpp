@@ -178,12 +178,12 @@ int Config::init(int argc, char *argv[])
 
 void Config::display(std::ostream &os) const
 {
-    os << "Config is " << std::string{Config::isValid() ? "" : "NOT "} << "valid\n";
-    os << "Input file name:  " << Config::getInputFile() << '\n';
-    os << "Output file name: " << Config::getOutputFile() << '\n';
-    if (Config::isLeadingSet())
+    os << "Config is " << std::string{isValid() ? "" : "NOT "} << "valid\n";
+    os << "Input file name:  " << getInputFile() << '\n';
+    os << "Output file name: " << getOutputFile() << '\n';
+    if (isLeadingSet())
     {
-        if (Config::isSpace())
+        if (isSpace())
             os << "Leading spaces will be replaced with tabs\n";
         else
             os << "Leading tabs will be replaced with spaces\n";
@@ -192,9 +192,9 @@ void Config::display(std::ostream &os) const
     {
         os << "Leading whitespace will be unchanged\n";
     }
-    if (Config::isTrailingSet())
+    if (isTrailingSet())
     {
-        if (Config::isDos())
+        if (isDos())
             os << "Newlines will be DOS style\n";
         else
             os << "Newlines will be Unix style\n";
@@ -203,10 +203,10 @@ void Config::display(std::ostream &os) const
     {
         os << "Newlines will be unchanged\n";
     }
-    os << "Tab size: " << Config::getTabSize() << '\n';
-    if (Config::isReplacing())
+    os << "Tab size: " << getTabSize() << '\n';
+    if (isReplacing())
         os << "Overwriting source file contents.\n";
-    if (Config::isDebug())
+    if (isDebug())
         os << "Generating debug summary.\n";
 }
 
@@ -215,7 +215,7 @@ bool Config::isValid(bool showErrors)
 {
     namespace fs = std::filesystem;
 
-    const auto & inputFile{Config::getInputFile()};
+    const auto & inputFile{getInputFile()};
 
     if (inputFile.string().empty())
     {
@@ -235,7 +235,7 @@ bool Config::isValid(bool showErrors)
         return false;
     }
 
-    if (Config::isReplacing() && Config::isSummary())
+    if (isReplacing() && isSummary())
     {
         if (showErrors)
         {
@@ -245,7 +245,7 @@ bool Config::isValid(bool showErrors)
         return false;
     }
 
-    const auto & outputFile{Config::getOutputFile()};
+    const auto & outputFile{getOutputFile()};
 
     if (fs::exists(outputFile))
     {
