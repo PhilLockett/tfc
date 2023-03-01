@@ -36,7 +36,7 @@ With 'tfc' installed the following command will display the help page:
 ### Changing the leading whitespace
 The leading whitespace of every line can be changed to either all spaces or
 tabs with the minimum number of spaces to make up the difference. The options
-'-2', '-4' or '-8' set the tab size in characters. The column offset is
+`-2`, `-4` or `-8` set the tab size in characters. The column offset is
 calculated from the leading whitespace. If a tab is encountered the offset is
 incremented to the next tab stop based on tab size. When a non whitespace
 character is found the column offset is used to create leading whitespace
@@ -62,13 +62,13 @@ input and output options.
 ## Cloning and Installing
 To clone, install and run this code, execute the following unix/linux commands:
 
-    git clone https://github.com/PhilLockett/tfc.git
-    cd tfc/
-    chmod +x fix.sh
-    ./fix.sh
-    ./configure
-    make
-    sudo make install
+    $ git clone https://github.com/PhilLockett/tfc.git
+    $ cd tfc/
+    $ chmod +x fix.sh
+    $ ./fix.sh
+    $ ./configure
+    $ make
+    $ sudo make install
 
 Once installed, 'tfc' can be run from any directory.
 
@@ -77,8 +77,8 @@ Sometimes it is more convenient to use a tar file to share software than
 connect to GitHub. The following command will create a tar file called 
 'tfc-1.0.tar.gz' from a cloned copy of the code:
 
-    cd tfc/
-    make dist
+    $ cd tfc/
+    $ make dist
 
 ## Installing from tar file
 The install process described in the INSTALL document is generic. For 
@@ -86,20 +86,20 @@ completeness the install process is also described here.
 
 The following command will unpack the tar file.
 
-    tar zxf tfc-1.0.tar.gz
+    $ tar zxf tfc-1.0.tar.gz
 
 After unpacking, issue the following shell commands:
 
-    cd tfc-1.0/
-    ./configure
-    make
-    sudo make install
+    $ cd tfc-1.0/
+    $ ./configure
+    $ make
+    $ sudo make install
 
 ## Uninstalling and cleaning up
 To uninstall 'tfc', run the following command from the directory used to run
 './configure', 'make' and 'make install':
 
-    sudo make uninstall
+    $ sudo make uninstall
 
 Once uninstalled, delete the tfc directory and all it's contents (it can easily
 be cloned again).
