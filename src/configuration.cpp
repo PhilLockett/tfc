@@ -97,23 +97,24 @@ int Config::parseCommandLine(int argc, char *argv[])
         return -1;
     }
 
-    while (1)
+    optind = 1; // Set the index.
+    static struct option long_options[] =
     {
-        int option_index = 0;
-        int optchr;
+        { "help",    no_argument,       0, 'h' },
+        { "version", no_argument,       0, 'v' },
+        { "input",   required_argument, 0, 'i' },
+        { "output",  required_argument, 0, 'o' },
+        { "replace", required_argument, 0, 'r' },
+        { "dos",     no_argument,       0, 'd' },
+        { "unix",    no_argument,       0, 'u' },
+        { "space",   no_argument,       0, 's' },
+        { "tab",     no_argument,       0, 't' },
+        { 0, 0, 0, 0 }
+    };
 
-        static struct option long_options[] = {
-            {"help",    no_argument,0,'h'},
-            {"version", no_argument,0,'v'},
-            {"input",   required_argument,0,'i'},
-            {"output",  required_argument,0,'o'},
-            {"replace", required_argument,0,'r'},
-            {"dos",     no_argument,0,'d'},
-            {"unix",    no_argument,0,'u'},
-            {"space",   no_argument,0,'s'},
-            {"tab",     no_argument,0,'t'},
-            {0,0,0,0}
-        };
+    for (int optchr{}; optchr != -1; )
+    {
+        int option_index{};
 
         optchr = getopt_long(argc, argv ,"hvi:o:r:dust248x", long_options, &option_index);
         if (optchr == -1)
@@ -121,31 +122,31 @@ int Config::parseCommandLine(int argc, char *argv[])
 
         switch (optchr)
         {
-            case 'h': return help();
-            case 'v': return version();
+        case 'h': return help();
+        case 'v': return version();
 
-            case 'i': setInputFile(std::string(optarg)); break;
-            case 'o': setOutputFile(std::string(optarg)); break;
-            case 'r': setReplaceFile(std::string(optarg)); break;
+        case 'i': setInputFile(std::string(optarg)); break;
+        case 'o': setOutputFile(std::string(optarg)); break;
+        case 'r': setReplaceFile(std::string(optarg)); break;
 
-            case 'd': setDos();     break;
-            case 'u': setUnix();    break;
+        case 'd': setDos();     break;
+        case 'u': setUnix();    break;
 
-            case 's': setSpaces();  break;
-            case 't': setTabs();    break;
+        case 's': setSpaces();  break;
+        case 't': setTabs();    break;
 
-            case '2': setTabSize(2);break;
-            case '4': setTabSize(4);break;
-            case '8': setTabSize(8);break;
+        case '2': setTabSize(2);break;
+        case '4': setTabSize(4);break;
+        case '8': setTabSize(8);break;
 
-            case 'x': enableDebug();break;
+        case 'x': enableDebug();break;
 
-            default:
-                help();
+        default:
+            help();
 
-                return -1;
-        }//end switch
-    }//end while
+            return -1;
+        }
+    }
 
     return 0;
 }
