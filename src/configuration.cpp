@@ -26,7 +26,6 @@
 #include <getopt.h>
 #include <future>
 
-#include "config.h"
 #include "configuration.h"
 
 

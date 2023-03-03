@@ -30,6 +30,7 @@
 #include <string>
 #include <filesystem>
 
+#include "config.h"
 
 
 /**
@@ -41,7 +42,7 @@ class Config
 private:
 //- Hide the default constructor and destructor.
     Config(void) : 
-        name{}, inputFile{}, outputFile{}, replace{},
+        name{PACKAGE}, inputFile{}, outputFile{}, replace{},
         leading{Whitespace::unspecified}, trailing{EndOfLine::unspecified},
         tabSize{4}, debug{}
         {  }
