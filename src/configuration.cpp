@@ -41,7 +41,7 @@
  *
  * @param  name - of application.
  */
-int Config::version(const char * const name)
+int Config::version(void)
 {
     std::cout << "Version " VERSION " of " << name << '\n';
     std::cout << "Feedback to: " PACKAGE_BUGREPORT << '\n';
@@ -55,7 +55,7 @@ int Config::version(const char * const name)
  *
  * @param  name - of application.
  */
-int Config::help(const char * const name)
+int Config::help(void)
 {
     std::cout << "Usage: " << name << " [Options]\n";
     std::cout << '\n';
@@ -90,9 +90,10 @@ int Config::help(const char * const name)
  */
 int Config::parseCommandLine(int argc, char *argv[])
 {
+    setName(argv[0]);   // Store program name;
     if (argc < 2)
     {
-        help(argv[0]);
+        help();
 
         return -1;
     }
@@ -121,8 +122,8 @@ int Config::parseCommandLine(int argc, char *argv[])
 
         switch (optchr)
         {
-            case 'h': return help(argv[0]);
-            case 'v': return version(argv[0]);
+            case 'h': return help();
+            case 'v': return version();
 
             case 'i': setInputFile(std::string(optarg)); break;
             case 'o': setOutputFile(std::string(optarg)); break;
@@ -141,7 +142,7 @@ int Config::parseCommandLine(int argc, char *argv[])
             case 'x': enableDebug();break;
 
             default:
-                help(argv[0]);
+                help();
 
                 return -1;
         }//end switch
@@ -179,6 +180,7 @@ int Config::init(int argc, char *argv[])
 void Config::display(std::ostream &os) const
 {
     os << "Config is " << std::string{isValid() ? "" : "NOT "} << "valid\n";
+    os << "Application name: " << getName() << '\n';
     os << "Input file name:  " << getInputFile() << '\n';
     os << "Output file name: " << getOutputFile() << '\n';
     if (isLeadingSet())

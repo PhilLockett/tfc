@@ -41,7 +41,7 @@ class Config
 private:
 //- Hide the default constructor and destructor.
     Config(void) : 
-        inputFile{}, outputFile{}, replace{},
+        name{}, inputFile{}, outputFile{}, replace{},
         leading{Whitespace::unspecified}, trailing{EndOfLine::unspecified},
         tabSize{4}, debug{}
         {  }
@@ -52,6 +52,7 @@ private:
     enum class Whitespace { unspecified, space, tab };
     enum class EndOfLine { unspecified, dos, unix };
 
+    std::string name;
     std::filesystem::path inputFile;
     std::filesystem::path outputFile;
     bool replace;
@@ -60,6 +61,7 @@ private:
     size_t tabSize;
     bool debug;
 
+    void setName(std::string value) { name = value; }
     void setInputFile(std::string name) { Config::instance().inputFile = name; }
     void setOutputFile(std::string name) { Config::instance().outputFile = name; }
     void setReplaceFile(std::string name) { Config::instance().inputFile = name; replace = true; }
@@ -70,8 +72,8 @@ private:
     void setTabSize(size_t size) { tabSize = size; }
     void enableDebug(void) {debug = true; }
 
-    int version(const char * const name);
-    int help(const char * const name);
+    int version(void);
+    int help(void);
     int parseCommandLine(int argc, char *argv[]);
 
 public:
@@ -84,8 +86,11 @@ public:
 
     static Config & instance() { static Config neo; return neo; }
 
+    static std::string & getName(void) { return instance().name; }
     static std::filesystem::path & getInputFile(void)     { return Config::instance().inputFile; }
     static std::filesystem::path & getOutputFile(void)    { return Config::instance().outputFile; }
+
+    static bool isName(void) { return !instance().name.empty(); }
     static bool isReplacing(void) { return Config::instance().replace; }
 
     static bool isLeadingSet(void) { return Config::instance().leading != Whitespace::unspecified; }
