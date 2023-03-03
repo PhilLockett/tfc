@@ -63,13 +63,13 @@ private:
     bool debug;
 
     void setName(std::string value) { name = value; }
-    void setInputFile(std::string name) { Config::instance().inputFile = name; }
-    void setOutputFile(std::string name) { Config::instance().outputFile = name; }
-    void setReplaceFile(std::string name) { Config::instance().inputFile = name; replace = true; }
-    void setSpaces() { Config::instance().leading = Whitespace::space; }
-    void setTabs() { Config::instance().leading = Whitespace::tab; }
-    void setDos() { Config::instance().trailing = EndOfLine::dos; }
-    void setUnix() { Config::instance().trailing = EndOfLine::unix; }
+    void setInputFile(std::string name) { inputFile = name; }
+    void setOutputFile(std::string name) { outputFile = name; }
+    void setReplaceFile(std::string name) { inputFile = name; replace = true; }
+    void setSpaces() { leading = Whitespace::space; }
+    void setTabs() { leading = Whitespace::tab; }
+    void setDos() { trailing = EndOfLine::dos; }
+    void setUnix() { trailing = EndOfLine::unix; }
     void setTabSize(size_t size) { tabSize = size; }
     void enableDebug(void) {debug = true; }
 
@@ -88,27 +88,27 @@ public:
     static Config & instance() { static Config neo; return neo; }
 
     static std::string & getName(void) { return instance().name; }
-    static std::filesystem::path & getInputFile(void)     { return Config::instance().inputFile; }
-    static std::filesystem::path & getOutputFile(void)    { return Config::instance().outputFile; }
+    static std::filesystem::path & getInputFile(void)     { return instance().inputFile; }
+    static std::filesystem::path & getOutputFile(void)    { return instance().outputFile; }
 
     static bool isName(void) { return !instance().name.empty(); }
-    static bool isReplacing(void) { return Config::instance().replace; }
+    static bool isReplacing(void) { return instance().replace; }
 
-    static bool isLeadingSet(void) { return Config::instance().leading != Whitespace::unspecified; }
-    static bool isSpace(void) { return Config::instance().leading == Whitespace::space; }
-    static bool isTab(void) { return Config::instance().leading == Whitespace::tab; }
+    static bool isLeadingSet(void) { return instance().leading != Whitespace::unspecified; }
+    static bool isSpace(void) { return instance().leading == Whitespace::space; }
+    static bool isTab(void) { return instance().leading == Whitespace::tab; }
 
-    static bool isTrailingSet(void) { return Config::instance().trailing != EndOfLine::unspecified; }
-    static bool isDos(void) { return Config::instance().trailing == EndOfLine::dos; }
-    static bool isUnix(void) { return Config::instance().trailing == EndOfLine::unix; }
+    static bool isTrailingSet(void) { return instance().trailing != EndOfLine::unspecified; }
+    static bool isDos(void) { return instance().trailing == EndOfLine::dos; }
+    static bool isUnix(void) { return instance().trailing == EndOfLine::unix; }
 
-    static size_t getTabSize(void) { return Config::instance().tabSize; }
+    static size_t getTabSize(void) { return instance().tabSize; }
 
     static bool isChangeRequested(void) { return isLeadingSet() || isTrailingSet(); }
     static bool isSummary(void) { return !isChangeRequested(); }
 
     static bool isValid(bool showErrors = false);
-    static bool isDebug(void) { return Config::instance().debug; }
+    static bool isDebug(void) { return instance().debug; }
 
 };
 
