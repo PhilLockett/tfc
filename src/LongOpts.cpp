@@ -78,13 +78,13 @@ void LongOpts::fillOptions(void)
 {
     long_options.reserve(list.size());
     struct option long_option;
+    long_option.flag = 0;
     for (const LongOpt & i : list)
     {
         if (i.isName())
         {
             long_option.name = i.getName();
             long_option.has_arg = i.isArg() ? required_argument : no_argument;
-            long_option.flag = 0;
             long_option.val = i.getVal();
             long_options.push_back(long_option);
         }
@@ -92,7 +92,6 @@ void LongOpts::fillOptions(void)
 
     long_option.name = 0;
     long_option.has_arg = 0;
-    long_option.flag = 0;
     long_option.val = 0;
     long_options.push_back(long_option);
 
