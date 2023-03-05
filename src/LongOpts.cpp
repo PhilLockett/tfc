@@ -76,13 +76,14 @@ void LongOpts::display(std::ostream &os) const
 
 void LongOpts::fillOptions(void)
 {
+    long_options.reserve(list.size());
     struct option long_option;
     for (const LongOpt & i : list)
     {
         if (i.isName())
         {
             long_option.name = i.getName();
-            long_option.has_arg = i.getArg() == NULL ? no_argument : required_argument;
+            long_option.has_arg = i.isArg() ? required_argument : no_argument;
             long_option.flag = 0;
             long_option.val = i.getVal();
             long_options.push_back(long_option);
