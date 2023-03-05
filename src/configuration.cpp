@@ -23,10 +23,11 @@
  * Implementation of the tfc configuration Singleton.
  */
 
-#include <getopt.h>
 #include <future>
+#include <vector>
 
 #include "configuration.h"
+#include "LongOpts.h"
 
 
 /**
@@ -49,6 +50,24 @@ int Config::version(void)
 }
 
 
+const std::vector<LongOpt> longOptVector
+{
+    { 'h', "help",    NULL,   "This help page and nothing else." },
+    { 'v', "version", NULL,   "Display version." },
+    { 'i', "input",   "file", "Input file name." },
+    { 'o', "output",  "file", "Output file name (default: console)." },
+    { 'r', "replace", "file", "Replace file with transformed version." },
+    { 'd', "dos",     NULL,   "DOS style End-Of-line." },
+    { 'u', "unix",    NULL,   "Unix style End-Of-line." },
+    { 's', "space",   NULL,   "Use leading spaces." },
+    { 't', "tab",     NULL,   "Use leading tabs." },
+    { '2', NULL,      NULL,   "Set tab size to 2 spaces." },
+    { '4', NULL,      NULL,   "Set tab size to 4 spaces (default)." },
+    { '8', NULL,      NULL,   "Set tab size to 8 spaces." },
+
+};
+const LongOpts longOptSet{longOptVector, "    ", "x"};
+
 /**
  * Display help message.
  *
@@ -62,18 +81,7 @@ int Config::help(void)
     std::cout << "  Corrects leading whitespace and line endings as required.\n";
     std::cout << '\n';
     std::cout << "  Options:\n";
-    std::cout << "\t-h --help \t\tThis help page and nothing else.\n";
-    std::cout << "\t-v --version \t\tDisplay version.\n";
-    std::cout << "\t-i --input <file> \tInput file name.\n";
-    std::cout << "\t-o --output <file> \tOutput file name (default: console).\n";
-    std::cout << "\t-r --replace <file> \tReplace file with transformed version.\n";
-    std::cout << "\t-d --dos\t\tDOS style End-Of-line.\n";
-    std::cout << "\t-u --unix\t\tUnix style End-Of-line.\n";
-    std::cout << "\t-s --space\t\tUse leading spaces.\n";
-    std::cout << "\t-t --tab\t\tUse leading tabs.\n";
-    std::cout << "\t-2 \t\t\tSet tab size to 2 spaces.\n";
-    std::cout << "\t-4 \t\t\tSet tab size to 4 spaces (default).\n";
-    std::cout << "\t-8 \t\t\tSet tab size to 8 spaces.\n";
+    std::cout << longOptSet;
 
     return 1;
 }
@@ -97,26 +105,11 @@ int Config::parseCommandLine(int argc, char *argv[])
         return -1;
     }
 
-    optind = 1; // Set the index.
-    static struct option long_options[] =
-    {
-        { "help",    no_argument,       0, 'h' },
-        { "version", no_argument,       0, 'v' },
-        { "input",   required_argument, 0, 'i' },
-        { "output",  required_argument, 0, 'o' },
-        { "replace", required_argument, 0, 'r' },
-        { "dos",     no_argument,       0, 'd' },
-        { "unix",    no_argument,       0, 'u' },
-        { "space",   no_argument,       0, 's' },
-        { "tab",     no_argument,       0, 't' },
-        { 0, 0, 0, 0 }
-    };
+    longOptSet.reset();
 
-    for (int optchr{}; optchr != -1; )
+    while (1)
     {
-        int option_index{};
-
-        optchr = getopt_long(argc, argv ,"hvi:o:r:dust248x", long_options, &option_index);
+        int optchr{longOptSet.getOpt(argc, argv)};
         if (optchr == -1)
             return 0;
 
@@ -125,9 +118,9 @@ int Config::parseCommandLine(int argc, char *argv[])
         case 'h': return help();
         case 'v': return version();
 
-        case 'i': setInputFile(std::string(optarg)); break;
-        case 'o': setOutputFile(std::string(optarg)); break;
-        case 'r': setReplaceFile(std::string(optarg)); break;
+        case 'i': setInputFile(longOptSet.getArg()); break;
+        case 'o': setOutputFile(longOptSet.getArg()); break;
+        case 'r': setReplaceFile(longOptSet.getArg()); break;
 
         case 'd': setDos();     break;
         case 'u': setUnix();    break;
