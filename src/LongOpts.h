@@ -69,15 +69,15 @@ public:
 class LongOpts
 {
 private:
-    void display(std::ostream &os) const;
-
+    std::vector<struct option> long_options;
     const std::vector<LongOpt> & list;
     const std::string indent;
-    std::vector<struct option> long_options;
     const std::string optstring;
 
     void fillOptions(void);
     std::string getOptstring(void) const;
+
+    void display(std::ostream &os) const;
 
 public:
     /**
