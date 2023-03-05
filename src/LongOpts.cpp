@@ -31,7 +31,7 @@
 
 
 /**
- * @brief Stream surrent state of the portal.
+ * @brief Stream command line option descriptions.
  * 
  * @param os output stream.
  */
@@ -73,7 +73,9 @@ void LongOpts::display(std::ostream &os) const
     }
 }
 
-
+/**
+ * @brief Fill in the long_options vector from provided list.
+ */
 void LongOpts::fillOptions(void)
 {
     long_options.reserve(list.size());
@@ -97,6 +99,11 @@ void LongOpts::fillOptions(void)
 
 }
 
+/**
+ * @brief Generate the optstring from provided list.
+ * 
+ * @return std::string acceptable option characters.
+ */
 std::string LongOpts::getOptstring(void) const
 {
     std::string opts{};
