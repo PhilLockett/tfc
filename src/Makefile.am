@@ -2,7 +2,7 @@ bin_PROGRAMS = tfc
 tfc_SOURCES = \
 	tfc.cpp tfc.h \
 	configuration.cpp configuration.h \
-	LongOpts.cpp LongOpts.h \
+	Opts.cpp Opts.h \
 	transform.cpp \
 	summary.cpp
 

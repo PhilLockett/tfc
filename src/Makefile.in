@@ -99,8 +99,8 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_tfc_OBJECTS = tfc.$(OBJEXT) configuration.$(OBJEXT) \
-	LongOpts.$(OBJEXT) transform.$(OBJEXT) summary.$(OBJEXT)
+am_tfc_OBJECTS = tfc.$(OBJEXT) configuration.$(OBJEXT) Opts.$(OBJEXT) \
+	transform.$(OBJEXT) summary.$(OBJEXT)
 tfc_OBJECTS = $(am_tfc_OBJECTS)
 tfc_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -118,9 +118,9 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/LongOpts.Po \
-	./$(DEPDIR)/configuration.Po ./$(DEPDIR)/summary.Po \
-	./$(DEPDIR)/tfc.Po ./$(DEPDIR)/transform.Po
+am__depfiles_remade = ./$(DEPDIR)/Opts.Po ./$(DEPDIR)/configuration.Po \
+	./$(DEPDIR)/summary.Po ./$(DEPDIR)/tfc.Po \
+	./$(DEPDIR)/transform.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -266,7 +266,7 @@ top_srcdir = @top_srcdir@
 tfc_SOURCES = \
 	tfc.cpp tfc.h \
 	configuration.cpp configuration.h \
-	LongOpts.cpp LongOpts.h \
+	Opts.cpp Opts.h \
 	transform.cpp \
 	summary.cpp
 
@@ -372,7 +372,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LongOpts.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Opts.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/configuration.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/summary.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfc.Po@am__quote@ # am--include-marker
@@ -524,7 +524,7 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/LongOpts.Po
+		-rm -f ./$(DEPDIR)/Opts.Po
 	-rm -f ./$(DEPDIR)/configuration.Po
 	-rm -f ./$(DEPDIR)/summary.Po
 	-rm -f ./$(DEPDIR)/tfc.Po
@@ -574,7 +574,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/LongOpts.Po
+		-rm -f ./$(DEPDIR)/Opts.Po
 	-rm -f ./$(DEPDIR)/configuration.Po
 	-rm -f ./$(DEPDIR)/summary.Po
 	-rm -f ./$(DEPDIR)/tfc.Po

@@ -27,7 +27,7 @@
 #include <vector>
 
 #include "configuration.h"
-#include "LongOpts.h"
+#include "Opts.h"
 
 
 /**
@@ -50,7 +50,7 @@ int Config::version(void)
 }
 
 
-const std::vector<LongOpt> longOptVector
+const Opts::OptsType optList
 {
     { 'h', "help",    NULL,   "This help page and nothing else." },
     { 'v', "version", NULL,   "Display version." },
@@ -64,9 +64,10 @@ const std::vector<LongOpt> longOptVector
     { '2', NULL,      NULL,   "Set tab size to 2 spaces." },
     { '4', NULL,      NULL,   "Set tab size to 4 spaces (default)." },
     { '8', NULL,      NULL,   "Set tab size to 8 spaces." },
+    { 'x', NULL,      NULL,   NULL },
 
 };
-const LongOpts longOptSet{longOptVector, "    ", "x"};
+Opts optSet{optList, "    "};
 
 /**
  * Display help message.
@@ -81,7 +82,7 @@ int Config::help(void)
     std::cout << "  Corrects leading whitespace and line endings as required.\n";
     std::cout << '\n';
     std::cout << "  Options:\n";
-    std::cout << longOptSet;
+    std::cout << optSet;
 
     return 1;
 }
@@ -105,22 +106,18 @@ int Config::parseCommandLine(int argc, char *argv[])
         return -1;
     }
 
-    longOptSet.reset();
+    optSet.process(argc, argv);
 
-    while (1)
+    for (const auto & option : optSet)
     {
-        int optchr{longOptSet.getOpt(argc, argv)};
-        if (optchr == -1)
-            return 0;
-
-        switch (optchr)
+        switch (option.getOpt())
         {
         case 'h': return help();
         case 'v': return version();
 
-        case 'i': setInputFile(longOptSet.getArg()); break;
-        case 'o': setOutputFile(longOptSet.getArg()); break;
-        case 'r': setReplaceFile(longOptSet.getArg()); break;
+        case 'i': setInputFile(option.getArg()); break;
+        case 'o': setOutputFile(option.getArg()); break;
+        case 'r': setReplaceFile(option.getArg()); break;
 
         case 'd': setDos();     break;
         case 'u': setUnix();    break;
