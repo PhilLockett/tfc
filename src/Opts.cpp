@@ -18,8 +18,8 @@
  *
  * @section DESCRIPTION
  *
- * Implementation of LongOpts, a wrapper class providing a simplified interface
- * to getopt_long() as well as generating a help page options list.
+ * Implementation of Opts, a class providing simple command line 
+ * processing as well as generating a help page options list.
  */
 
 #include <iostream>

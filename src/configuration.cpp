@@ -94,8 +94,7 @@ int Config::help(const std::string & error)
 
 
 /**
- * Process command line parameters with help from getopt_long() and update
- * global variables.
+ * Process command line parameters with help from Opts.
  *
  * @param  argc - command line argument count.
  * @param  argv - command line argument vector.

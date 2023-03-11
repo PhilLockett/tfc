@@ -107,7 +107,7 @@ be cloned again).
 ## Points of interest
 This code has the following points of interest:
 
-  * Uses getopt_long() to help handle command line parameters.
+  * Uses Opts to help handle command line parameters.
   * The command line parameters are stored in the Config class.
   * The Config class is implemented as a singleton.
   * The Config setters are private so only methods and friends can use them.

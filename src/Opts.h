@@ -18,7 +18,7 @@
  *
  * @section DESCRIPTION
  *
- * Interface to and implementation of the LongOpt and LongOpts.
+ * Interface to and implementation of the Opt, Arg and Opts classes.
  */
 
 #if !defined(_OPTS_C_H__20230307_2025__INCLUDED_)
