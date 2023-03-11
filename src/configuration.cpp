@@ -105,9 +105,12 @@ int Config::parseCommandLine(int argc, char *argv[])
 {
     setName(argv[0]);   // Store program name;
     if (argc < 2)
-        return help("arguments required.");
+        return help("valid arguments required.");
 
     optSet.process(argc, argv);
+
+    if (optSet.isErrors())
+        return help("valid arguments required.");
 
     for (const auto & option : optSet)
     {
@@ -131,11 +134,10 @@ int Config::parseCommandLine(int argc, char *argv[])
         case '8': setTabSize(8);break;
 
         case 'x': enableDebug();break;
+
+        default: return help("internal error.");
         }
     }
-
-    if (optSet.isErrors())
-        return help("valid arguments required.");
 
     return 0;
 }
