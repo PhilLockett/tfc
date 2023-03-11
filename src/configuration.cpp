@@ -74,7 +74,7 @@ Opts optSet{optList, "    "};
  *
  * @param  name - of application.
  */
-int Config::help(void)
+int Config::help(const std::string & error)
 {
     std::cout << "Usage: " << name << " [Options]\n";
     std::cout << '\n';
@@ -84,7 +84,12 @@ int Config::help(void)
     std::cout << "  Options:\n";
     std::cout << optSet;
 
-    return 1;
+    if (error.empty())
+        return 1;
+
+    std::cerr << "\nError: " << error << "\n";
+
+    return -1;
 }
 
 
@@ -100,11 +105,7 @@ int Config::parseCommandLine(int argc, char *argv[])
 {
     setName(argv[0]);   // Store program name;
     if (argc < 2)
-    {
-        help();
-
-        return -1;
-    }
+        return help("arguments required.");
 
     optSet.process(argc, argv);
 
@@ -112,7 +113,7 @@ int Config::parseCommandLine(int argc, char *argv[])
     {
         switch (option.getOpt())
         {
-        case 'h': return help();
+        case 'h': return help("");
         case 'v': return version();
 
         case 'i': setInputFile(option.getArg()); break;
@@ -130,13 +131,11 @@ int Config::parseCommandLine(int argc, char *argv[])
         case '8': setTabSize(8);break;
 
         case 'x': enableDebug();break;
-
-        default:
-            help();
-
-            return -1;
         }
     }
+
+    if (optSet.isErrors())
+        return help("valid arguments required.");
 
     return 0;
 }

@@ -74,7 +74,7 @@ private:
     void enableDebug(void) {debug = true; }
 
     int version(void);
-    int help(void);
+    int help(const std::string & error);
     int parseCommandLine(int argc, char *argv[]);
 
 public:

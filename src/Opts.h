@@ -71,7 +71,7 @@ public:
 
 private:
     const OptIter iter;
-    const std::string arg;
+    const char * arg;
 
 public:
     Arg(OptIter i, const char * a) : iter{i}, arg{a}
@@ -80,22 +80,43 @@ public:
     const OptIter getIter(void) const { return iter; }
 
     /**
-     * @brief Get the next option in argv.
+     * @brief Get the current short option.
      * 
-     * @return int the next option character.
+     * @return int the current option character.
      */
     int getOpt(void) const { return iter->getValInt(); }
     int getValInt(void) const { return iter->getValInt(); }
     char getVal(void) const { return iter->getVal(); }
 
+
+    const char * getArgPtr(void) const { return arg; }
+
     /**
-     * @brief Get the argument associated with the last option returned by getOpt().
+     * @brief Get the argument associated with the current option.
      * 
      * @return std::string the argument.
      */
-    const std::string & getArg(void) const { return arg; }
+    const std::string getArg(void) const { return std::string(getArgPtr()); }
+
+    /**
+     * @brief Indicate if the current option has an argument.
+     * 
+     * @return true if the option has an argument, false otherwise.
+     */
     bool isArg(void) const { return !getArg().empty(); }
     int getArgLen(void) const { return getArg().length(); }
+
+    /**
+     * @brief Get the current long option.
+     * 
+     * @return std::string the long option.
+     */
+    std::string getLong(void) const { return iter->getNameString(); }
+
+    bool isShort(void) const { return iter->getValInt(); }
+    bool isLong(void) const { return iter->isName(); }
+    std::string getArgName(void) const { return iter->getArgString(); }
+    std::string getDesc(void) const { return iter->getDescString(); }
 
 };
 
