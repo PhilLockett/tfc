@@ -182,4 +182,38 @@ void Opts::process(int argc, char *argv[])
     }
 }
 
+std::string Opts::firstError(int * index) const
+{
+    if (!isErrors())
+    {
+        return "";
+    }
 
+    *index = 0;
+
+    return errorList.at(0);
+}
+
+std::string Opts::nextError(int * index) const
+{
+    if (!isErrors())
+    {
+        return "";
+    }
+
+    (*index)++;
+    if (*index >= errorList.size())
+    {
+        return "";
+    }
+
+    return errorList.at(*index);
+}
+
+void Opts::streamErrors(std::ostream &os) const
+{
+	os << "Unrecognised arguments[" << errorList.size() << "]:\n";
+	for (const auto & i : errorList)
+		os << "  \"" << i << "\"\n";
+	os << "\n";
+}

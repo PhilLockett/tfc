@@ -172,6 +172,9 @@ public:
     void process(int argc, char *argv[]);
 
     bool isErrors(void) const { return !errorList.empty(); }
+    std::string firstError(int * index) const;
+    std::string nextError(int * index) const;
+    void streamErrors(std::ostream &os) const;
 
     friend std::ostream & operator<<(std::ostream &os, const Opts &A) { A.display(os); return os; }
 
