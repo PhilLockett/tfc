@@ -209,6 +209,12 @@ void Config::display(std::ostream &os) const
 }
 
 
+/**
+ * @brief Check whether the configuration is valid.
+ * 
+ * @param showErrors flag to indicate if error messages are to be displayed.
+ * @return true if the configuration is valid, false otherwise.
+ */
 bool Config::isValid(bool showErrors)
 {
     namespace fs = std::filesystem;
