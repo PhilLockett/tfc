@@ -54,6 +54,7 @@ const Opts::OptsType optList
 {
     { 'h', "help",    NULL,   "This help page and nothing else." },
     { 'v', "version", NULL,   "Display version." },
+    { 0,   NULL,      NULL,   "" },
     { 'i', "input",   "file", "Input file name." },
     { 'o', "output",  "file", "Output file name (default: console)." },
     { 'r', "replace", "file", "Replace file with transformed version." },
@@ -64,7 +65,7 @@ const Opts::OptsType optList
     { '2', NULL,      NULL,   "Set tab size to 2 spaces." },
     { '4', NULL,      NULL,   "Set tab size to 4 spaces (default)." },
     { '8', NULL,      NULL,   "Set tab size to 8 spaces." },
-    { 'x', NULL,      NULL,   NULL },
+    { 'x', NULL,      NULL,   "" },
 
 };
 Opts optSet{optList, "    "};
