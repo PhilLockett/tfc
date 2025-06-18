@@ -10,7 +10,8 @@ This utility checks text files for consistency in the following areas:
   * leading whitespace
   * line endings
   * identifies presence of UTF-8 or ISO/IEC 8859-1 characters
- It can either report on the state of a file or correct inconsistencies
+
+It can either report on the state of a file or correct inconsistencies
 depending on the options provided.
 It does not change character encodings (UTF-8 or ISO/IEC 8859-1) but the
 summary will identify the presence of either.
