@@ -1,6 +1,8 @@
 # tfc
 'tfc' is a command-line utility Text File Checker and corrector.
 
+**THIS UTILITY CAN BE USED TO OVERWRITE EXISTING FIES.**
+
 **USE AT OWN RISK.**
 
 ## Overview

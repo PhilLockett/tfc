@@ -269,11 +269,6 @@ std::string Status::processNewline(void)
 }
 
 
-/**
- * @section main code.
- *
- */
-
 int Status::process(std::ostream &os, std::ifstream &is)
 {
     for (is.get(event); !is.eof(); is.get(event))
@@ -284,6 +279,11 @@ int Status::process(std::ostream &os, std::ifstream &is)
     return 0;
 }
 
+
+/*****************************************************************************
+ * @section main code.
+ *
+ */
 
 /**
  * Process the user specified file.
@@ -305,7 +305,15 @@ int processTransform(void)
             if (std::ofstream os{tempFile, std::ios::binary})
             {
                 state.process(os, is);
-                std::filesystem::rename(tempFile, inputFile);   // Overwrite.
+                os.close();
+                is.close();
+
+                const auto copyOptions = std::filesystem::copy_options::overwrite_existing;
+                if (!std::filesystem::copy_file(tempFile, inputFile, copyOptions))   // Overwrite.
+                {
+                    std::cerr << "Failed to copy file " << tempFile << " to " << inputFile << '\n';
+                }
+                std::filesystem::remove(tempFile);   // Clean up.
             }
             else
             {
