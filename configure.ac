@@ -1,4 +1,4 @@
-AC_INIT([tfc], [1.0], [phillockett65@gmail.com])
+AC_INIT([tfc], [1.1], [phillockett65@gmail.com])
 : ${CXXFLAGS="-std=c++20"}
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_PROG_CXX

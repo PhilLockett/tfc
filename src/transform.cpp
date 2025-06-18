@@ -49,7 +49,7 @@ public:
     int process(std::ostream &os, std::ifstream &is);
 
 private:
-    enum class State { start, begining, middle, end };
+    enum class State { start, beginning, middle, end };
     enum class NLState { start, CR_rec, LF_rec, other };
 
     const size_t size;
@@ -66,7 +66,16 @@ private:
     
     bool isNewLine(void) const {    return ((event == '\n') || (event == '\r')); }
     std::string padding(void);
+
+    std::string processCharStart(void);
+    std::string processCharBeginning(void);
+    std::string processCharEnd(void);
     std::string processChar(void);
+
+    std::string processNewlineStart(void);
+    std::string processNewlineCR(void);
+    std::string processNewlineLF(void);
+    std::string processNewlineOther(void);
     std::string processNewline(void);
 };
 
@@ -98,7 +107,70 @@ std::string Status::padding(void)
  * @section whitespace handler.
  *
  */
- 
+std::string Status::processCharStart(void)
+{
+    switch (event)
+    {
+    case ' ':
+        state = State::beginning;
+        ++column;
+        break;
+
+    case '\t':
+        state = State::beginning;
+        column = ((column / size) + 1) * size;
+        break;
+
+    default:
+        state = State::middle;
+        return std::string{event};
+    }
+
+    return "";
+}
+
+std::string Status::processCharBeginning(void)
+{
+    switch (event)
+    {
+    case ' ':
+        ++column;
+        break;
+
+    case '\t':
+        column = ((column / size) + 1) * size;
+        break;
+
+    default:
+        state = State::middle;
+        return padding() + std::string{event};
+    }
+
+    return "";
+}
+
+std::string Status::processCharEnd(void)
+{
+    switch (event)
+    {
+    case ' ':
+        state = State::beginning;
+        column = 1;
+        break;
+
+    case '\t':
+        state = State::beginning;
+        column = size;
+        break;
+
+    default:
+        state = State::middle;
+        return std::string{event};
+    }
+
+    return "";
+}
+
 std::string Status::processChar(void)
 {
     if (ignoreHead)
@@ -115,7 +187,7 @@ std::string Status::processChar(void)
     if (isNewLine())
     {
         std::string ret{};
-        if (state == State::begining)
+        if (state == State::beginning)
             ret = padding();
 
         state = State::end;
@@ -123,41 +195,22 @@ std::string Status::processChar(void)
         return ret;
     }
 
+    std::string result{};
     switch (state)
     {
     case State::start:
-        switch (event)
+        result = processCharStart();
+        if (!result.empty())
         {
-        case ' ':
-            state = State::begining;
-            ++column;
-            break;
-
-        case '\t':
-            state = State::begining;
-            column = ((column / size) + 1) * size;
-            break;
-
-        default:
-            state = State::middle;
-            return std::string{event};
+            return result;
         }
     break;
 
-    case State::begining:
-        switch (event)
+    case State::beginning:
+        result = processCharBeginning();
+        if (!result.empty())
         {
-        case ' ':
-            ++column;
-            break;
-
-        case '\t':
-            column = ((column / size) + 1) * size;
-            break;
-
-        default:
-            state = State::middle;
-            return padding() + std::string{event};
+            return result;
         }
     break;
 
@@ -166,21 +219,10 @@ std::string Status::processChar(void)
     break;
 
     case State::end:
-        switch (event)
+        result = processCharEnd();
+        if (!result.empty())
         {
-        case ' ':
-            state = State::begining;
-            column = 1;
-            break;
-
-        case '\t':
-            state = State::begining;
-            column = size;
-            break;
-
-        default:
-            state = State::middle;
-            return std::string{event};
+            return result;
         }
     break;
 
@@ -195,73 +237,95 @@ std::string Status::processChar(void)
  *
  */
 
+std::string Status::processNewlineStart(void)
+{
+    switch (event)
+    {
+    case '\r':  nlState = NLState::CR_rec;  return newline;
+    case '\n':  nlState = NLState::LF_rec;  return newline;
+
+    default:    nlState = NLState::other;
+    }
+
+    return "";
+}
+
+std::string Status::processNewlineCR(void)
+{
+    switch (event)
+    {
+    case '\r':  return newline;
+    case '\n':  nlState = NLState::other;   break;
+
+    default:    nlState = NLState::other;
+    }
+
+    return "";
+}
+
+std::string Status::processNewlineLF(void)
+{
+    switch (event)
+    {
+    case '\r':  nlState = NLState::other;   break;
+    case '\n':  return newline;
+
+    default:    nlState = NLState::other;
+    }
+
+    return "";
+}
+
+std::string Status::processNewlineOther(void)
+{
+    switch (event)
+    {
+    case '\r':  nlState = NLState::CR_rec;  return newline;
+    case '\n':  nlState = NLState::LF_rec;  return newline;
+
+    default:    nlState = NLState::other;
+    }
+
+    return "";
+}
+
 std::string Status::processNewline(void)
 {
     if ((ignoreTail) && (isNewLine()))
         return std::string{event};
 
-
+    std::string result{};
     switch (nlState)
     {
     case NLState::start:
-        switch (event)
+        result = processNewlineStart();
+        if (!result.empty())
         {
-        case '\r':
-            nlState = NLState::CR_rec;
-            return newline;
-
-        case '\n':
-            nlState = NLState::LF_rec;
-            return newline;
-
-        default:
-            nlState = NLState::other;
+            return result;
         }
     break;
 
     case NLState::CR_rec:
-        switch (event)
+        result = processNewlineCR();
+        if (!result.empty())
         {
-        case '\r':
-            return newline;
-
-        case '\n':
-            nlState = NLState::other;
-            break;
-
-        default:
-            nlState = NLState::other;
+            return result;
         }
     break;
 
     case NLState::LF_rec:
-        switch (event)
+        result = processNewlineLF();
+        if (!result.empty())
         {
-        case '\r':
-            nlState = NLState::other;
-            break;
-
-        case '\n':
-            return newline;
-
-        default:
-            nlState = NLState::other;
+            return result;
         }
     break;
 
     case NLState::other:
-        switch (event)
+        result = processNewlineOther();
+        if (!result.empty())
         {
-        case '\r':
-            nlState = NLState::CR_rec;
-            return newline;
-
-        case '\n':
-            nlState = NLState::LF_rec;
-            return newline;
-
-        default:
-            nlState = NLState::other;
+            return result;
         }
     }
 

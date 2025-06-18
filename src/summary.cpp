@@ -29,6 +29,7 @@
 
 #include "tfc.h"
 #include "configuration.h"
+#include "utf_8.h"
 
 
 
@@ -55,38 +56,62 @@ private:
     int tabOnly{};
     int both{};
     int malformed{};
-    int dos{};
-    int unix{};
+    int dosEOL{};
+    int unixEOL{};
+    int ansi{};
+    int utf8{};
+    int utf8Needed{};
+    int utf8Processed{};
+    int utf8Error{};
     void processTab(void);
     void processSpace(void);
     void processLineFeed(void);
     void processCarriageReturn(void);
-    void processAllOther(void);
+    void processAllOther(unsigned char event);
     void display(std::ostream &os);
     void displaySummary(std::ostream &os);
     void displayDebug(std::ostream &os);
 };
 
+static void streamValue(std::ostream &os, const std::string & label, int value)
+{
+    if (value == 0)
+    {
+        return;
+    }
+
+    os << "  ";
+
+	std::string valStr{std::to_string(value)};
+    std::string padding(18 - label.length() - valStr.length(), ' ');
+    os << label << ":" << padding << valStr;
+
+    os << "\n";
+}
+
 void State::displaySummary(std::ostream &os)
 {
     os << Config::getInputFile().string() << '\n';
-    os << "  Total Lines:\t" << lines << '\n';
-    os << "Line begining:\n";
-    if (spOnly)
-        os << "  Space only:\t" << spOnly << '\n';
-    if (tabOnly)
-        os << "  Tab only:\t" << tabOnly << '\n';
-    if (neither)
-        os << "  Neither:\t" << neither << '\n';
-    if (both)
-        os << "  Both:\t\t" << both << '\n';
+    streamValue(os, "Total Lines", lines);
+
+    os << "Line beginning:\n";
+    streamValue(os, "Space only", spOnly);
+    streamValue(os, "Tab only", tabOnly);
+    streamValue(os, "Neither", neither);
+    streamValue(os, "Both", both);
+
     os << "Line ending:\n";
-    if (dos)
-        os << "  Dos:\t\t" << dos << '\n';
-    if (unix)
-        os << "  Unix:\t\t" << unix << '\n';
-    if (malformed)
-        os << "  Malformed:\t" << malformed << '\n';
+    streamValue(os, "Dos", dosEOL);
+    streamValue(os, "Unix", unixEOL);
+    streamValue(os, "Malformed", malformed);
+
+    if (ansi || utf8)
+    {
+        os << "Character encoding:\n";
+        streamValue(os, "ANSI", ansi);
+        streamValue(os, "UTF-8", utf8);
+    }
+
     os << '\n';
 }
 
@@ -98,8 +123,8 @@ void State::displayDebug(std::ostream &os)
     os << " " << tabOnly;
     os << " " << neither;
     os << " " << both;
-    os << " " << dos;
-    os << " " << unix;
+    os << " " << dosEOL;
+    os << " " << unixEOL;
     os << " " << malformed;
     os << '\n';
 }
@@ -133,10 +158,10 @@ void State::processSpace(void)
 void State::processLineFeed(void)
 {
     if (cr)
-        ++dos;
+        ++dosEOL;
     else
     {
-        ++unix;
+        ++unixEOL;
         lf = true;
     }
 
@@ -168,7 +193,7 @@ void State::processCarriageReturn(void)
     if (lf)
     {
         ++malformed;
-        --unix;		// Was counted as unix, but shouldn't be.
+        --unixEOL;		// Was counted as unix, but shouldn't be.
         cr = false;
     }
     else
@@ -177,11 +202,66 @@ void State::processCarriageReturn(void)
     lf = false;
 }
 
-void State::processAllOther(void)
+static int numUtf8Bytes(unsigned char lead)
+{
+    if ((lead & 0x80) == 0x0)   return 1;
+    if ((lead & 0xE0) == 0xC0)  return 2;
+    if ((lead & 0xF0) == 0xE0)  return 3;
+    if ((lead & 0xF8) == 0xF0)  return 4;
+
+    return 0;
+}
+
+static bool isUtf8ContinuationByte(unsigned char byte)
+{
+    return ((byte & 0xC0) == 0x80);
+}
+
+void State::processAllOther(unsigned char event)
 {
     start = false;
     lf = false;
     cr = false;
+
+    if (event > 0x7F)
+    {
+        if (utf8Needed)
+        {
+            if (isUtf8ContinuationByte(event))
+            {
+                ++utf8Processed;
+                if (utf8Processed == utf8Needed)
+                {
+                    ++utf8;
+                    utf8Needed = 0;
+                    utf8Processed = 0;
+                }
+
+
+            }
+            else
+            {
+                ansi += utf8Processed;
+                utf8Needed = 0;
+                utf8Processed = 0;
+            }
+
+        }
+        else
+        {
+            int length{numUtf8Bytes(event)};
+            if (length)
+            {
+                utf8Needed = length;
+                utf8Processed = 1;
+            }
+            else
+            {
+                ++ansi;
+            }
+        }
+
+    }
 }
 
 
@@ -197,7 +277,7 @@ int State::process(std::ostream &os, std::ifstream &is)
         case '\n':  processLineFeed();          break;
         case '\r':  processCarriageReturn();    break;
     
-        default:    processAllOther();
+        default:    processAllOther(event);
         }
     }
 

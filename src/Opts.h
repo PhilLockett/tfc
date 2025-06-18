@@ -161,7 +161,7 @@ public:
      * @brief Construct a new Opts object
      * 
      * @param list Vector of Opt entries describing each option.
-     * @param indent string displayed at the begining of each line.
+     * @param indent string displayed at the beginning of each line.
      */
     Opts(const std::vector<Opt> & list, const std::string ind)
         : options{list}, indent{ind}, argList{}, errorList{}

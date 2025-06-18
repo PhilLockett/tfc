@@ -6,9 +6,14 @@
 **USE AT OWN RISK.**
 
 ## Overview
-This utility checks text files for consistent leading whitespace and line 
-endings. It can either report on the state of a file or correct inconsistencies
+This utility checks text files for consistency in the following areas:
+  * leading whitespace
+  * line endings
+  * identifies presence of UTF-8 or ISO/IEC 8859-1 characters
+ It can either report on the state of a file or correct inconsistencies
 depending on the options provided.
+It does not change character encodings (UTF-8 or ISO/IEC 8859-1) but the
+summary will identify the presence of either.
 
 To use `tfc` you will need a C++ compiler and 'make' utility installed. 
 
@@ -22,18 +27,19 @@ With `tfc` installed the following command will display the help page:
       Corrects leading whitespace and line endings as required.
     
       Options:
-            -h --help               This help page and nothing else.
-            -v --version            Display version.
-            -i --input <file>       Input file name.
-            -o --output <file>      Output file name (default: console).
-            -r --replace <file>     Replace file with transformed version.
-            -d --dos                DOS style End-Of-line.
-            -u --unix               Unix style End-Of-line.
-            -s --space              Use leading spaces.
-            -t --tab                Use leading tabs.
-            -2                      Set tab size to 2 spaces.
-            -4                      Set tab size to 4 spaces (default).
-            -8                      Set tab size to 8 spaces.
+        -h --help           This help page and nothing else.
+        -v --version        Display version.
+
+        -i --input <file>   Input file name.
+        -o --output <file>  Output file name (default: console).
+        -r --replace <file> Replace file with transformed version.
+        -d --dos            DOS style End-Of-line.
+        -u --unix           Unix style End-Of-line.
+        -s --space          Use leading spaces.
+        -t --tab            Use leading tabs.
+        -2                  Set tab size to 2 spaces.
+        -4                  Set tab size to 4 spaces (default).
+        -8                  Set tab size to 8 spaces.
 
 ### Changing the leading whitespace
 The leading whitespace of every line can be changed to either all spaces or
@@ -113,7 +119,7 @@ To check a file:
     $ tfc -i tfc.cpp
     tfc.cpp
       Total Lines:  75
-    Line begining:
+    Line beginning:
       Space only:   55
       Neither:      20
     Line ending:
@@ -130,7 +136,7 @@ This creates the new file 'tfcdos.cpp':
     $ tfc -i tfcdos.cpp
     tfcdos.cpp
       Total Lines:  75
-    Line begining:
+    Line beginning:
       Space only:   32
       Tab only:     23
       Neither:      20
@@ -157,7 +163,7 @@ The number of spaces to be replaced by tabs can be specified as 2, 4 or 8:
     $ tfc -i tfcdos.cpp
     tfcdos.cpp
       Total Lines:  75
-    Line begining:
+    Line beginning:
       Space only:   50
       Tab only:     5
       Neither:      20
@@ -174,14 +180,14 @@ Sometimes it is more convenient to overwrite a file with the changes:
     $ tfc -i tfcdos.cpp
     tfcdos.cpp
       Total Lines:  75
-    Line begining:
+    Line beginning:
       Space only:   32
       Tab only:     23
       Neither:      20
     Line ending:
       Dos:          75
 
-**THIS IS NOT RECOMMENDED UNLESS YOU HAVE A BACK UP AND CAN TRACK THE CHANGES***
+**THIS IS NOT RECOMMENDED UNLESS YOU HAVE A BACK UP AND CAN TRACK THE CHANGES**
 
 ## Points of interest
 This code has the following points of interest:
