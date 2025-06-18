@@ -1,5 +1,5 @@
 # tfc
-'tfc' is a command-line utility Text File Checker and corrector.
+`tfc` is a command-line utility Text File Checker and corrector.
 
 **THIS UTILITY CAN BE USED TO OVERWRITE EXISTING FIES.**
 
@@ -10,10 +10,10 @@ This utility checks text files for consistent leading whitespace and line
 endings. It can either report on the state of a file or correct inconsistencies
 depending on the options provided.
 
-To use 'tfc' you will need a C++ compiler and 'make' utility installed. 
+To use `tfc` you will need a C++ compiler and 'make' utility installed. 
 
 ## Usage
-With 'tfc' installed the following command will display the help page:
+With `tfc` installed the following command will display the help page:
 
     $ tfc --help
     Usage: tfc [Options]
@@ -42,7 +42,7 @@ tabs with the minimum number of spaces to make up the difference. The options
 calculated from the leading whitespace. If a tab is encountered the offset is
 incremented to the next tab stop based on tab size. When a non whitespace
 character is found the column offset is used to create leading whitespace
-padding from tabs and/or spaces. The rest of teh line is left unchanged.
+padding from tabs and/or spaces. The rest of the line is left unchanged.
 
 ### Changing the newline characters.
 The trailing new line can be changed to either a dos style carriage return line
@@ -72,7 +72,7 @@ To clone, install and run this code, execute the following unix/linux commands:
     $ make
     $ sudo make install
 
-Once installed, 'tfc' can be run from any directory.
+Once installed, `tfc` can be run from any directory.
 
 ## Creating a tar file
 Sometimes it is more convenient to use a tar file to share software than 
@@ -98,13 +98,90 @@ After unpacking, issue the following shell commands:
     $ sudo make install
 
 ## Uninstalling and cleaning up
-To uninstall 'tfc', run the following command from the directory used to run
+To uninstall `tfc`, run the following command from the directory used to run
 './configure', 'make' and 'make install':
 
     $ sudo make uninstall
 
-Once uninstalled, delete the tfc directory and all it's contents (it can easily
+Once uninstalled, delete the 'tfc' directory and all it's contents (it can easily
 be cloned again).
+
+## Examples
+### Checking the state of a file
+To check a file:
+
+    $ tfc -i tfc.cpp
+    tfc.cpp
+      Total Lines:  75
+    Line begining:
+      Space only:   55
+      Neither:      20
+    Line ending:
+      Unix:         75
+
+### Generate a new file
+To generate a new file with tabs (with spaces as needed) at the beginning of 
+lines and Dos style line endings.
+
+    $ tfc -i tfc.cpp -t -d -o tfcdos.cpp
+
+This creates the new file 'tfcdos.cpp':
+
+    $ tfc -i tfcdos.cpp
+    tfcdos.cpp
+      Total Lines:  75
+    Line begining:
+      Space only:   32
+      Tab only:     23
+      Neither:      20
+    Line ending:
+      Dos:          75
+
+The default tab size is 4 spaces. 
+Every occurrence of 4 spaces is replaced with a tab. 
+Any line that starts with less than 4 spaces will not have the spaces changed.
+
+### Attempting to overwrite an existing file
+If the output option specifies an existing file `tfc` will generate an error 
+message and abort:
+
+    $ tfc -i tfc.cpp -8 -t -d -o tfcdos.cpp
+
+    Warning output file "tfcdos.cpp" will be overwritten.
+
+### Changing the tab size
+The number of spaces to be replaced by tabs can be specified as 2, 4 or 8:
+
+    $ rm tfcdos.cpp
+    $ tfc -i tfc.cpp -8 -t -d -o tfcdos.cpp
+    $ tfc -i tfcdos.cpp
+    tfcdos.cpp
+      Total Lines:  75
+    Line begining:
+      Space only:   50
+      Tab only:     5
+      Neither:      20
+    Line ending:
+      Dos:          75
+
+Here we delete 'tfcdos.cpp' before we generate it again with tabs the size of 8 
+spaces.
+
+### Overwriting existing files
+Sometimes it is more convenient to overwrite a file with the changes:
+
+    $ tfc -r tfcdos.cpp -t -d
+    $ tfc -i tfcdos.cpp
+    tfcdos.cpp
+      Total Lines:  75
+    Line begining:
+      Space only:   32
+      Tab only:     23
+      Neither:      20
+    Line ending:
+      Dos:          75
+
+**THIS IS NOT RECOMMENDED UNLESS YOU HAVE A BACK UP AND CAN TRACK THE CHANGES***
 
 ## Points of interest
 This code has the following points of interest:
